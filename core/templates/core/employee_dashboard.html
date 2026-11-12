@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard | NGS</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 35px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card .icon {
+            width: 34px;
+            height: 34px;
+            margin-bottom: 12px;
+            color: #527B63;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #29483C;
+        }
+
+        .development {
+            grid-column: span 2;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        .development .icon {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+
+            .development {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Employee Dashboard</h1>
+    </header>
+
+    <main>
+
+        <section class="welcome">
+            <h2>Welcome Back, {{ employee.name }}!</h2>
+        </section>
+
+        <section class="sections">
+
+            <div class="card">
+                <i data-lucide="user-round" class="icon"></i>
+                <h3>My Profile</h3>
+            </div>
+
+            <div class="card">
+                <i data-lucide="lightbulb" class="icon"></i>
+                <h3>Skills</h3>
+            </div>
+
+            <div class="card">
+                <i data-lucide="award" class="icon"></i>
+                <h3>Certifications</h3>
+            </div>
+
+            <div class="card">
+                <i data-lucide="book-open" class="icon"></i>
+                <h3>Training</h3>
+            </div>
+
+            <div class="card development">
+                <i data-lucide="target" class="icon"></i>
+                <h3>Development Activities & Goals</h3>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+</html>

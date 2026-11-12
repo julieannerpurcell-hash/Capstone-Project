@@ -73,7 +73,12 @@ def logout_view(request):
 def employee_dashboard(request):
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
-    return HttpResponse("Employee Dashboard - Coming Soon")
+
+    employee = request.user.employee_profile
+
+    return render(request, 'core/employee_dashboard.html', {
+        'employee': employee
+    })
 
 
 @login_required
