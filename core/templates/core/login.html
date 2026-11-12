@@ -22,7 +22,7 @@
         }
 
         .login-container {
-            background: white;
+            background: #f7f4ec;
             width: 90%;
             max-width: 420px;
             padding: 40px;
@@ -33,7 +33,6 @@
         h1 {
             text-align: center;
             margin-bottom: 8px;
-    
         }
 
         .subtitle {
@@ -46,6 +45,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
+            text-align: left;
         }
 
         input {
@@ -89,13 +89,6 @@
         <p class="subtitle">
             Login
         </p>
-
-        {% for message in messages %}
-            <p class="error">{{ message }}</p>
-        {% endfor %}
-
-        <form method="POST">
-            {% csrf_token %}
 
             <label for="username">Username</label>
             <input

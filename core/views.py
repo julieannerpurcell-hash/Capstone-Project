@@ -68,7 +68,6 @@ def logout_view(request):
 
     return redirect_by_role(request.user)
 
-
 @login_required
 def employee_dashboard(request):
     if request.user.employee_profile.role != 'employee':
@@ -77,6 +76,17 @@ def employee_dashboard(request):
     employee = request.user.employee_profile
 
     return render(request, 'core/employee_dashboard.html', {
+        'employee': employee
+    })
+
+@login_required
+def employee_profile(request):
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
+
+    employee = request.user.employee_profile
+
+    return render(request, 'core/employee_profile.html', {
         'employee': employee
     })
 

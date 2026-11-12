@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | NGS</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px;
+        }
+
+        /* Navigation Bar */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Profile Icon */
+        .icon {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: #E8EEE8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon i {
+            font-size: 25px;
+            color: #29483C;
+        }
+
+        .employee-id {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Employee Information */
+        .section-title {
+            border-bottom: 1px solid #DDD5C5;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .profile-information {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .info-item {
+            padding: 10px 0;
+        }
+
+        .info-label {
+            color: #777;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .status {
+            color: #527B63;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 600px) {
+            main {
+                padding: 20px;
+            }
+
+            .navigation {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .profile-information {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Profile</h1>
+    </header>
+
+    <main>
+
+        <!-- Navigation and Search -->
+        <section class="navigation">
+
+            <a href="{% url 'employee_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+
+            <input
+                type="text"
+                id="profileSearch"
+                class="search-box"
+                placeholder="Search my profile..."
+            >
+
+        </section>
+
+        <!-- Employee Profile -->
+        <section class="profile-card">
+
+            <div class="profile-header">
+
+                <div class="icon">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+
+                <div>
+                    <div class="info-label">EMPLOYEE ID</div>
+                    <div class="employee-id">NGS-{{ employee.id }}</div>
+                </div>
+
+            </div>
+
+            <h3 class="section-title">Employee Information</h3>
+
+            <div class="profile-information">
+
+                <div class="info-item">
+                    <div class="info-label">NAME</div>
+                    <div class="info-value">{{ employee.name }}</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">DEPARTMENT</div>
+                    <div class="info-value">
+                        {{ employee.department|default:"Not assigned" }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">JOB TITLE</div>
+                    <div class="info-value">
+                        {{ employee.job_role.title|default:"Not assigned" }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">MANAGER</div>
+                    <div class="info-value">
+                        {{ employee.manager.name|default:"Not assigned" }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">EMPLOYMENT STATUS</div>
+                    <div class="info-value status">
+                        {{ employee.get_status_display }}
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Profile Search Function -->
+    <script>
+        const searchInput = document.getElementById("profileSearch");
+        const informationItems = document.querySelectorAll(".info-item");
+
+        searchInput.addEventListener("input", function() {
+            const searchText = this.value.toLowerCase();
+
+            informationItems.forEach(function(item) {
+                const itemText = item.textContent.toLowerCase();
+
+                item.style.display = itemText.includes(searchText)
+                    ? ""
+                    : "none";
+            });
+        });
+    </script>
+
+</body>
+</html>
