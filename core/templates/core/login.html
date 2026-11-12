@@ -22,7 +22,7 @@
         }
 
         .login-container {
-            background: #f7f4ec;
+            background: #F7F4EC;
             width: 90%;
             max-width: 420px;
             padding: 40px;
@@ -86,16 +86,21 @@
 
         <h1>Development Portal</h1>
 
-        <p class="subtitle">
-            Login
-        </p>
+        <p class="subtitle">Login</p>
+
+        {% for message in messages %}
+            <p class="error">{{ message }}</p>
+        {% endfor %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
 
             <label for="username">Username</label>
             <input
                 type="text"
                 id="username"
                 name="username"
-                placeholder="Enter your ID number"
+                placeholder="Enter your username"
                 required
             >
 
