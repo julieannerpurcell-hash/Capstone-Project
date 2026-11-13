@@ -242,14 +242,32 @@ class TrainingRecord(models.Model):
  
  
 class DevelopmentGoal(models.Model):
+
     STATUS_CHOICES = [
         ("not_started", "Not Started"),
         ("in_progress", "In Progress"),
         ("complete", "Complete"),
     ]
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="development_goals")
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="development_goals")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="not_started")
- 
+
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="development_goals"
+    )
+
+    skill = models.ForeignKey(
+        Skill,
+        on_delete=models.CASCADE,
+        related_name="development_goals"
+    )
+
+    target_date = models.DateField(null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="not_started"
+    )
+
     def __str__(self):
         return f"{self.employee} goal: {self.skill}"

@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Development | NGS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+            overflow-y: scroll;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px 100px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .section-heading {
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 6px;
+        }
+
+        .development-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .development-card {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid #DDD5C5;
+        }
+
+        .development-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .development-info h3 {
+            margin: 0 0 12px;
+        }
+
+        .development-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .development-details strong {
+            color: #29483C;
+        }
+
+        .empty-message {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            color: #777;
+        }
+
+        .edit-button {
+            margin-top: 22px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .edit-button:hover {
+            background: #527B63;
+        }
+
+        .edit-section {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .ask-ai-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }
+
+        .ask-ai-button:hover {
+            background: #527B63;
+        }
+
+        .ai-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px #00000025;
+            z-index: 10;
+        }
+
+        .ai-panel h3 {
+            margin-top: 0;
+        }
+
+        .ai-panel p {
+            color: #777;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .ai-panel button {
+            background: #29483C;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+            main {
+                padding: 20px 15px 100px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .navigation {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .development-card-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .development-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Development Goals</h1>
+    </header>
+
+    <main>
+
+        <!-- Navigation and Search -->
+
+        <section class="navigation">
+
+            <a href="{% url 'employee_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+
+            <input
+                type="text"
+                id="developmentSearch"
+                class="search-box"
+                placeholder="Search development goals..."
+            >
+
+        </section>
+
+        <!-- Development Goals -->
+
+        <section>
+
+            <div class="development-grid" id="developmentGrid">
+
+                {% for item in development_goals %}
+
+                    <div class="development-card"
+                         data-name="{{ item.skill.name|lower }}">
+
+                        <div class="development-card-top">
+
+                            <div class="development-info">
+
+                                <h3>{{ item.skill.name }}</h3>
+
+                                <div class="development-details">
+
+                                    <span>
+                                        <strong>Target Date:</strong>
+
+                                        {% if item.target_date %}
+                                            {{ item.target_date|date:"M d, Y" }}
+                                        {% else %}
+                                            Not set
+                                        {% endif %}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-message">
+                        You do not have any professional development goals yet.
+                    </div>
+
+                {% endfor %}
+
+                <div class="empty-message" id="noResults"
+                     style="display: none;">
+                    No development goals match your search.
+                </div>
+
+            </div>
+
+            <!-- Edit Goals Button -->
+
+            <div class="edit-section">
+                <button type="button" class="edit-button">
+                    <i class="fa-solid fa-pen"></i>
+                    Edit Goals
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Ask AI Button -->
+
+    <button class="ask-ai-button" onclick="toggleAI()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Ask AI
+    </button>
+
+    <div class="ai-panel" id="aiPanel">
+
+        <h3>NGS AI Assistant</h3>
+
+        <p>
+            Ask questions about your professional development goals
+            and opportunities to improve your skills.
+        </p>
+
+        <button onclick="toggleAI()">Close</button>
+
+    </div>
+
+    <script>
+
+        const searchInput =
+            document.getElementById("developmentSearch");
+
+        const developmentCards =
+            document.querySelectorAll(".development-card");
+
+        const noResults =
+            document.getElementById("noResults");
+
+        searchInput.addEventListener("input", function() {
+
+            const searchText = searchInput.value.toLowerCase();
+
+            let visibleCount = 0;
+
+            developmentCards.forEach(card => {
+
+                const name = card.dataset.name;
+
+                if (name.includes(searchText)) {
+                    card.style.display = "block";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+
+            });
+
+            if (noResults) {
+                noResults.style.display =
+                    visibleCount === 0 ? "block" : "none";
+            }
+
+        });
+
+        function toggleAI() {
+
+            const panel = document.getElementById("aiPanel");
+
+            panel.style.display =
+                panel.style.display === "block" ? "none" : "block";
+
+        }
+
+    </script>
+
+</body>
+</html>

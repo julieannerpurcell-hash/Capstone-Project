@@ -165,6 +165,24 @@ def employee_training(request):
         'employee': employee,
         'training_records': training_records,
     })
+
+@login_required
+def employee_development(request):
+
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
+
+    employee = request.user.employee_profile
+
+    development_goals = employee.development_goals.select_related(
+        'skill'
+    ).all().order_by('target_date')
+
+    return render(request, 'core/developmental_goals.html', {
+        'employee': employee,
+        'development_goals': development_goals,
+    })
+
 @login_required
 def manager_dashboard(request):
     if request.user.employee_profile.role != 'manager':
