@@ -33,6 +33,12 @@ class Employee(models.Model):
     ]
  
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee_profile")
+    employee_id = models.PositiveIntegerField(
+        unique=True,
+        null=True,
+        blank=True
+    )
+
     name = models.CharField(max_length=100)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name="employees")
     job_role = models.ForeignKey(JobRole, on_delete=models.SET_NULL, null=True, related_name="employees")
@@ -55,38 +61,88 @@ class Skill(models.Model):
  
  
 class EmployeeSkill(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="employee_skills")
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="employee_skills")
-    # 1 = Beginner, 2 = Intermediate, 3 = Advanced, 4 = Expert
-    proficiency = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
- 
+    PROFICIENCY_CHOICES = [
+        (1, "Beginner"),
+        (2, "Intermediate"),
+        (3, "Advanced"),
+    ]
+
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="employee_skills"
+    )
+    skill = models.ForeignKey(
+        Skill,
+        on_delete=models.CASCADE,
+        related_name="employee_skills"
+    )
+    proficiency = models.IntegerField(
+        choices=PROFICIENCY_CHOICES,
+        validators=[MinValueValidator(1), MaxValueValidator(3)]
+    )
+
     class Meta:
         unique_together = ("employee", "skill")
- 
+
     def __str__(self):
         return f"{self.employee} - {self.skill} ({self.proficiency})"
  
  
 class JobRoleSkill(models.Model):
-    job_role = models.ForeignKey(JobRole, on_delete=models.CASCADE, related_name="required_skills")
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="job_roles_requiring")
-    required_level = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
-    is_required = models.BooleanField(default=True)  # False = nice to have
- 
+    PROFICIENCY_CHOICES = [
+        (1, "Beginner"),
+        (2, "Intermediate"),
+        (3, "Advanced"),
+    ]
+
+    job_role = models.ForeignKey(
+        JobRole,
+        on_delete=models.CASCADE,
+        related_name="required_skills"
+    )
+    skill = models.ForeignKey(
+        Skill,
+        on_delete=models.CASCADE,
+        related_name="job_roles_requiring"
+    )
+    required_level = models.IntegerField(
+        choices=PROFICIENCY_CHOICES,
+        validators=[MinValueValidator(1), MaxValueValidator(3)]
+    )
+    is_required = models.BooleanField(default=True)
+
     class Meta:
         unique_together = ("job_role", "skill")
- 
+
     def __str__(self):
         return f"{self.job_role} needs {self.skill} (level {self.required_level})"
- 
- 
+    
 class Certification(models.Model):
     name = models.CharField(max_length=150)
     issuer = models.CharField(max_length=150, blank=True)
  
     def __str__(self):
         return self.name
- 
+    
+class JobRoleCertification(models.Model):
+    job_role = models.ForeignKey(
+        JobRole,
+        on_delete=models.CASCADE,
+        related_name="required_certifications"
+    )
+    certification = models.ForeignKey(
+        Certification,
+        on_delete=models.CASCADE,
+        related_name="required_for_roles"
+    )
+    is_required = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("job_role", "certification")
+
+    def __str__(self):
+        return f"{self.job_role} requires {self.certification}"
  
 class EmployeeCertification(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="certifications")
@@ -107,6 +163,8 @@ class EmployeeCertification(models.Model):
         if self.expiration_date <= today + timedelta(days=self.EXPIRING_SOON_DAYS):
             return "Expiring soon"
         return "Active"
+    class Meta:
+        unique_together = ("employee", "certification")
  
     def __str__(self):
         return f"{self.employee} - {self.certification}"
@@ -135,7 +193,10 @@ class TrainingRecord(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="training_records")
     training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="training_records")
     completion_date = models.DateField(null=True, blank=True)
- 
+    
+    class Meta:
+        unique_together = ("employee", "training")
+    
     def __str__(self):
         return f"{self.employee} - {self.training}"
  

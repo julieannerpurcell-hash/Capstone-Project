@@ -89,7 +89,30 @@ def employee_profile(request):
     return render(request, 'core/employee_profile.html', {
         'employee': employee
     })
+@login_required
+def employee_skills(request):
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
 
+    employee = request.user.employee_profile
+
+    skills = employee.employee_skills.select_related('skill').all()
+
+    role_skills = {}
+
+    if employee.job_role:
+        role_skills = {
+            role_skill.skill_id: role_skill.is_required
+            for role_skill in employee.job_role.required_skills.all()
+        }
+
+    for item in skills:
+        item.is_required_for_role = role_skills.get(item.skill_id)
+
+    return render(request, 'core/employee_skills.html', {
+        'employee': employee,
+        'skills': skills
+    })
 
 @login_required
 def manager_dashboard(request):

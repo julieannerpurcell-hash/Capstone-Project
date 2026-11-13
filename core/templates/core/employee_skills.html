@@ -1,0 +1,479 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Skills | NGS</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+            overflow-y: scroll;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px 100px;
+        }
+
+        /* Navigation Bar */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        /* Page Introduction */
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            margin-bottom: 8px;
+        }
+
+        .page-intro p {
+            color: #777;
+            margin: 0;
+        }
+
+        /* Proficiency Filter */
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            background: white;
+            color: #29483C;
+            font-size: 14px;
+        }
+
+        /* Skills Layout */
+      
+        .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skill-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px 24px;
+    border-radius: 12px;
+    gap: 15px;
+}
+
+.skill-card h3,
+.skill-card p {
+    margin: 0;
+}
+
+.skill-card p {
+    color: #777;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+        /* Proficiency Labels */
+        .proficiency {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .requirement {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.required {
+    background: #DCE9DF;
+    color: #29483C;
+}
+
+.optional {
+    background: #F5EBD7;
+    color: #8A682B;
+}
+
+.not-assigned {
+    background: #EEEEEE;
+    color: #666666;
+}
+        .beginner {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .intermediate {
+            background: #E8EEE8;
+            color: #527B63;
+        }
+
+        .advanced {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        /* No Results Message */
+        .empty-message {
+            grid-column: 1 / -1;
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* Ask AI Button */
+        .ask-ai-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }
+
+        .ask-ai-button:hover {
+            background: #527B63;
+        }
+
+        /* AI Assistant Panel */
+        .ai-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px #00000025;
+            z-index: 10;
+        }
+
+        .ai-panel h3 {
+            margin-top: 0;
+        }
+
+        .ai-panel p {
+            color: #777;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .ai-panel button {
+            background: #29483C;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 650px) {
+            main {
+                padding: 20px 15px 100px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .navigation {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skill-card {
+                padding: 20px;
+            }
+
+            .filter-section {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Skills</h1>
+    </header>
+
+    <main>
+
+        <!-- Navigation and Search -->
+        <section class="navigation">
+
+            <a href="{% url 'employee_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+
+            <input
+                type="text"
+                id="skillSearch"
+                class="search-box"
+                placeholder="Search my skills..."
+            >
+
+        </section>   
+
+        <!-- Proficiency Filter -->
+        <section class="filter-section">
+
+            <label for="proficiencyFilter">
+                Filter by proficiency:
+            </label>
+
+            <select id="proficiencyFilter">
+                <option value="all">All</option>
+                <option value="1">Beginner</option>
+                <option value="2">Intermediate</option>
+                <option value="3">Advanced</option>
+            </select>
+
+        </section>
+
+        <!-- Employee Skills -->
+<section class="skills-grid" id="skillsGrid">
+
+    {% for item in skills %}
+
+        <div class="skill-card"
+             data-name="{{ item.skill.name|lower }}"
+             data-proficiency="{{ item.proficiency }}">
+
+            <div class="skill-info">
+                <h3>{{ item.skill.name }}</h3>
+
+                {% if item.is_required_for_role == True %}
+                    <span class="requirement required">Required</span>
+                {% elif item.is_required_for_role == False %}
+                    <span class="requirement optional">Optional</span>
+                {% else %}
+                    <span class="requirement not-assigned">Not assigned</span>
+                {% endif %}
+            </div>
+
+            <span class="proficiency
+                {% if item.proficiency == 1 %}
+                    beginner
+                {% elif item.proficiency == 2 %}
+                    intermediate
+                {% elif item.proficiency == 3 %}
+                    advanced
+                {% endif %}">
+                {{ item.get_proficiency_display }}
+            </span>
+
+        </div>
+
+    {% empty %}
+
+        <div class="empty-message">
+            You have not added any skills yet.
+        </div>
+
+    {% endfor %}
+
+    <div class="empty-message" id="noResults" style="display: none;">
+        No skills match your search or filter.
+    </div>
+
+</section>
+
+    </main>
+
+    <!-- Ask AI Button -->
+    <button class="ask-ai-button" onclick="toggleAI()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Ask AI
+    </button>
+
+    <!-- AI Assistant Panel -->
+    <div class="ai-panel" id="aiPanel">
+
+        <h3>NGS AI Assistant</h3>
+
+        <p>
+            Ask questions about your professional skills,
+            proficiency levels, and development opportunities.
+        </p>
+
+        <p>
+            The AI assistant will help identify skill gaps
+            and suggest professional development opportunities.
+        </p>
+
+        <button onclick="toggleAI()">Close</button>
+
+    </div>
+
+    <!-- Search, Filter, and AI Functions -->
+    <script>
+
+        const searchInput = document.getElementById("skillSearch");
+
+        const proficiencyFilter =
+            document.getElementById("proficiencyFilter");
+
+        const skillCards =
+            document.querySelectorAll(".skill-card");
+
+        const noResults =
+            document.getElementById("noResults");
+
+
+        function filterSkills() {
+
+            const searchText =
+                searchInput.value.toLowerCase();
+
+            const selectedLevel =
+                proficiencyFilter.value;
+
+            let visibleCount = 0;
+
+            skillCards.forEach(card => {
+
+                const skillName = card.dataset.name;
+
+                const proficiency =
+                    card.dataset.proficiency;
+
+                const matchesSearch =
+                    skillName.includes(searchText);
+
+                const matchesFilter =
+                    selectedLevel === "all" ||
+                    proficiency === selectedLevel;
+
+                if (matchesSearch && matchesFilter) {
+
+                    card.style.display = "flex";
+
+                    visibleCount++;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+            noResults.style.display =
+                visibleCount === 0 ? "block" : "none";
+
+        }
+
+
+        searchInput.addEventListener("input", filterSkills);
+
+        proficiencyFilter.addEventListener(
+            "change",
+            filterSkills
+        );
+
+
+        function toggleAI() {
+
+            const panel =
+                document.getElementById("aiPanel");
+
+            panel.style.display =
+                panel.style.display === "block"
+                ? "none"
+                : "block";
+
+        }
+
+    </script>
+
+</body>
+</html>

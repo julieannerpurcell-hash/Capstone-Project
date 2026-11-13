@@ -88,34 +88,33 @@
 
         <p class="subtitle">Login</p>
 
-        {% for message in messages %}
-            <p class="error">{{ message }}</p>
-        {% endfor %}
+            {% for message in messages %}
+    <p class="error">{{ message }}</p>
+{% endfor %}
 
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
 
-            <label for="username">Username</label>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Enter your username"
-                required
-            >
+    <label for="username">Employee ID</label>
+    <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your Employee ID"
+        required
+    >
 
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-            >
+    <label for="password">Password</label>
+    <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter your password"
+        required
+    >
 
-            <button type="submit">Log In</button>
-
-        </form>
+    <button type="submit">Log In</button>
+</form>
 
     </div>
 
