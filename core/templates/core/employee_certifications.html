@@ -1,0 +1,546 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Certifications | NGS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+            overflow-y: scroll;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px 100px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            background: white;
+            color: #29483C;
+            font-size: 14px;
+        }
+
+        /* Certification Summary */
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #DDD5C5;
+        }
+
+        .summary-card h2 {
+            margin: 0 0 8px;
+            font-size: 27px;
+            color: #29483C;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .certifications-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .certification-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            gap: 20px;
+        }
+
+        .certification-info h3 {
+            margin: 0 0 7px;
+        }
+
+        .certification-info p {
+            margin: 4px 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .certification-details {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .requirement,
+        .status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .required {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        .optional {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .not-assigned {
+            background: #EEEEEE;
+            color: #666666;
+        }
+
+        .active {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        .expiring {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .expired {
+            background: #F4DEDA;
+            color: #A34438;
+        }
+
+        .empty-message {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* Record Certification Button */
+
+        .record-certification-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .record-certification-button {
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .record-certification-button:hover {
+            background: #527B63;
+        }
+
+        .ask-ai-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }
+
+        .ask-ai-button:hover {
+            background: #527B63;
+        }
+
+        .ai-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px #00000025;
+            z-index: 10;
+        }
+
+        .ai-panel h3 {
+            margin-top: 0;
+        }
+
+        .ai-panel p {
+            color: #777;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .ai-panel button {
+            background: #29483C;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+            main {
+                padding: 20px 15px 100px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .navigation {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .certification-card {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .filter-section {
+                flex-wrap: wrap;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Certifications</h1>
+    </header>
+
+    <main>
+
+        <section class="navigation">
+
+            <a href="{% url 'employee_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+
+            <input
+                type="text"
+                id="certificationSearch"
+                class="search-box"
+                placeholder="Search my certifications..."
+            >
+
+        </section>
+
+        <section class="filter-section">
+
+            <label for="statusFilter">Filter by status:</label>
+
+            <select id="statusFilter">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="expiring soon">Expiring Soon</option>
+                <option value="expired">Expired</option>
+            </select>
+
+        </section>
+
+        <!-- Certification Summary -->
+
+        <section class="summary-cards">
+
+            <div class="summary-card">
+                <h2>{{ total_count }}</h2>
+                <p>Total</p>
+            </div>
+
+            <div class="summary-card">
+                <h2>{{ active_count }}</h2>
+                <p>Active</p>
+            </div>
+
+            <div class="summary-card">
+                <h2>{{ expiring_count }}</h2>
+                <p>Expiring Soon</p>
+            </div>
+
+            <div class="summary-card">
+                <h2>{{ expired_count }}</h2>
+                <p>Expired</p>
+            </div>
+
+        </section>
+
+        <!-- Certification Cards -->
+
+        <section class="certifications-grid" id="certificationsGrid">
+
+            {% for item in certifications %}
+
+                <div class="certification-card"
+                     data-name="{{ item.certification.name|lower }}"
+                     data-status="{{ item.status|lower }}">
+
+                    <div class="certification-info">
+
+                        <h3>{{ item.certification.name }}</h3>
+
+                        <p>{{ item.certification.issuer|default:"Issuing organization not listed" }}</p>
+
+                        <div class="certification-details">
+
+                            <span>
+                                <strong>Date Earned:</strong>
+                                {{ item.date_earned|date:"M d, Y" }}
+                            </span>
+
+                            <span>
+                                <strong>Expiration:</strong>
+                                {% if item.expiration_date %}
+                                    {{ item.expiration_date|date:"M d, Y" }}
+                                {% else %}
+                                    No expiration
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                        {% if item.is_required_for_role == True %}
+                            <span class="requirement required">Required</span>
+                        {% elif item.is_required_for_role == False %}
+                            <span class="requirement optional">Optional</span>
+                        {% else %}
+                            <span class="requirement not-assigned">Not assigned</span>
+                        {% endif %}
+
+                    </div>
+
+                    <span class="status
+                        {% if item.status == 'Active' %}
+                            active
+                        {% elif item.status == 'Expiring soon' %}
+                            expiring
+                        {% else %}
+                            expired
+                        {% endif %}">
+                        {{ item.status }}
+                    </span>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-message">
+                    You have not added any certifications yet.
+                </div>
+
+            {% endfor %}
+
+            <div class="empty-message" id="noResults"
+                 style="display: none;">
+                No certifications match your search or filter.
+            </div>
+
+        </section>
+
+        <!-- Record Certification Button -->
+
+        <div class="record-certification-container">
+            <button class="record-certification-button" type="button">
+                <i class="fa-solid fa-plus"></i>
+                Record Certification
+            </button>
+        </div>
+
+    </main>
+
+    <button class="ask-ai-button" onclick="toggleAI()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Ask AI
+    </button>
+
+    <div class="ai-panel" id="aiPanel">
+
+        <h3>NGS AI Assistant</h3>
+
+        <p>
+            Ask questions about your certifications,
+            expiration dates, and professional development.
+        </p>
+
+        <button onclick="toggleAI()">Close</button>
+
+    </div>
+
+    <script>
+
+        const searchInput =
+            document.getElementById("certificationSearch");
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        const certificationCards =
+            document.querySelectorAll(".certification-card");
+
+        const noResults =
+            document.getElementById("noResults");
+
+        function filterCertifications() {
+
+            const searchText = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            let visibleCount = 0;
+
+            certificationCards.forEach(card => {
+
+                const name = card.dataset.name;
+                const status = card.dataset.status;
+
+                const matchesSearch = name.includes(searchText);
+
+                const matchesStatus =
+                    selectedStatus === "all" ||
+                    status === selectedStatus;
+
+                if (matchesSearch && matchesStatus) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+
+            });
+
+            noResults.style.display =
+                visibleCount === 0 ? "block" : "none";
+
+        }
+
+        searchInput.addEventListener(
+            "input",
+            filterCertifications
+        );
+
+        statusFilter.addEventListener(
+            "change",
+            filterCertifications
+        );
+
+        function toggleAI() {
+
+            const panel = document.getElementById("aiPanel");
+
+            panel.style.display =
+                panel.style.display === "block" ? "none" : "block";
+
+        }
+
+    </script>
+
+</body>
+</html>

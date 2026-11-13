@@ -115,6 +115,40 @@ def employee_skills(request):
     })
 
 @login_required
+def employee_certifications(request):
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
+
+    employee = request.user.employee_profile
+
+    certifications = list(
+        employee.certifications.select_related('certification').all()
+    )
+
+    role_certifications = {}
+
+    if employee.job_role:
+        role_certifications = {
+            item.certification_id: item.is_required
+            for item in employee.job_role.required_certifications.all()
+        }
+
+    for item in certifications:
+        item.is_required_for_role = role_certifications.get(
+            item.certification_id
+        )
+
+    return render(request, 'core/employee_certifications.html', {
+        'employee': employee,
+        'certifications': certifications,
+
+        # Summary counts
+        'total_count': len(certifications),
+        'active_count': sum(item.status == 'Active' for item in certifications),
+        'expiring_count': sum(item.status == 'Expiring soon' for item in certifications),
+        'expired_count': sum(item.status == 'Expired' for item in certifications),
+    })
+@login_required
 def manager_dashboard(request):
     if request.user.employee_profile.role != 'manager':
         return redirect_by_role(request.user)
