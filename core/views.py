@@ -142,11 +142,28 @@ def employee_certifications(request):
         'employee': employee,
         'certifications': certifications,
 
-        # Summary counts
         'total_count': len(certifications),
         'active_count': sum(item.status == 'Active' for item in certifications),
         'expiring_count': sum(item.status == 'Expiring soon' for item in certifications),
         'expired_count': sum(item.status == 'Expired' for item in certifications),
+    })
+
+@login_required
+def employee_training(request):
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
+
+    employee = request.user.employee_profile
+
+    training_records = employee.training_records.select_related(
+        'training',
+        'training__related_skill',
+        'training__related_certification'
+    ).all().order_by('due_date')
+
+    return render(request, 'core/employee_training.html', {
+        'employee': employee,
+        'training_records': training_records,
     })
 @login_required
 def manager_dashboard(request):

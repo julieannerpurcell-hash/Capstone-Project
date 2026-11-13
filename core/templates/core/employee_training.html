@@ -1,0 +1,577 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Training | NGS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+            overflow-y: scroll;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px 100px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .filter-section label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            background: white;
+            color: #29483C;
+            font-size: 14px;
+        }
+
+        .section-heading {
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 6px;
+        }
+
+        .section-heading p {
+            color: #777;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .training-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .training-card {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid #DDD5C5;
+        }
+
+        .training-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .training-info h3 {
+            margin: 0 0 12px;
+        }
+
+        .training-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .training-details strong {
+            color: #29483C;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .upcoming {
+            background: #EEEEEE;
+            color: #666666;
+        }
+
+        .in-progress {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .completed {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        .view-button {
+            margin-top: 18px;
+            background: none;
+            border: none;
+            color: #29483C;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+
+        .view-button:hover {
+            color: #8FAF9B;
+        }
+
+        .view-button i {
+            margin-left: 5px;
+        }
+
+        .training-expanded {
+            display: none;
+            margin-top: 18px;
+            padding: 18px;
+            background: #F7F4EC;
+            border-radius: 8px;
+            border: 1px solid #DDD5C5;
+        }
+
+        .training-expanded p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #666;
+            margin: 8px 0;
+        }
+
+        .training-expanded strong {
+            color: #29483C;
+        }
+
+        .empty-message {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            color: #777;
+        }
+
+        .ask-ai-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }
+
+        .ask-ai-button:hover {
+            background: #527B63;
+        }
+
+        .ai-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px #00000025;
+            z-index: 10;
+        }
+
+        .ai-panel h3 {
+            margin-top: 0;
+        }
+
+        .ai-panel p {
+            color: #777;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .ai-panel button {
+            background: #29483C;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+            main {
+                padding: 20px 15px 100px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .navigation {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-section {
+                flex-wrap: wrap;
+            }
+
+            .training-card-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .training-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Training</h1>
+    </header>
+
+    <main>
+
+        <!-- Navigation and Search -->
+
+        <section class="navigation">
+
+            <a href="{% url 'employee_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+
+            <input
+                type="text"
+                id="trainingSearch"
+                class="search-box"
+                placeholder="Search my training..."
+            >
+
+        </section>
+
+        <!-- Status Filter -->
+
+        <section class="filter-section">
+
+            <label for="statusFilter">Filter by status:</label>
+
+            <select id="statusFilter">
+                <option value="all">All</option>
+                <option value="not_started">Not Started</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+
+        </section>
+
+        <!-- Training Records -->
+
+        <section>
+
+            <div class="section-heading">
+                <h2>Training Records</h2>
+            </div>
+
+            <div class="training-grid" id="trainingGrid">
+
+                {% for item in training_records %}
+
+                    <div class="training-card"
+                         data-name="{{ item.training.course_name|lower }}"
+                         data-status="{{ item.status }}">
+
+                        <div class="training-card-top">
+
+                            <div class="training-info">
+
+                                <h3>{{ item.training.course_name }}</h3>
+
+                                <div class="training-details">
+
+                                    <span>
+                                        <strong>Due Date:</strong>
+                                        {% if item.due_date %}
+                                            {{ item.due_date|date:"M d, Y" }}
+                                        {% else %}
+                                            Not assigned
+                                        {% endif %}
+                                    </span>
+
+                                    <span>
+                                        <strong>Status:</strong>
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <span class="status
+                                {% if item.status == 'completed' %}
+                                    completed
+                                {% elif item.status == 'in_progress' %}
+                                    in-progress
+                                {% else %}
+                                    upcoming
+                                {% endif %}">
+
+                                {{ item.get_status_display }}
+
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="view-button"
+                            onclick="toggleTraining(this)">
+
+                            View Training
+                            <i class="fa-solid fa-chevron-down"></i>
+
+                        </button>
+
+                        <div class="training-expanded">
+
+                            <p>
+                                <strong>Provider:</strong>
+                                {{ item.training.provider|default:"Not listed" }}
+                            </p>
+
+                            <p>
+                                <strong>Delivery Method:</strong>
+                                {{ item.training.get_delivery_method_display }}
+                            </p>
+
+                            <p>
+                                <strong>Duration:</strong>
+                                {% if item.training.duration_hours %}
+                                    {{ item.training.duration_hours }} hours
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </p>
+
+                            {% if item.training.related_skill %}
+                                <p>
+                                    <strong>Related Skill:</strong>
+                                    {{ item.training.related_skill.name }}
+                                </p>
+                            {% endif %}
+
+                            {% if item.training.related_certification %}
+                                <p>
+                                    <strong>Related Certification:</strong>
+                                    {{ item.training.related_certification.name }}
+                                </p>
+                            {% endif %}
+
+                            {% if item.completion_date %}
+                                <p>
+                                    <strong>Completion Date:</strong>
+                                    {{ item.completion_date|date:"M d, Y" }}
+                                </p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-message">
+                        You do not have any assigned training records yet.
+                    </div>
+
+                {% endfor %}
+
+                <div class="empty-message" id="noResults"
+                     style="display: none;">
+                    No training records match your search or filter.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Ask AI Button -->
+
+    <button class="ask-ai-button" onclick="toggleAI()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Ask AI
+    </button>
+
+    <div class="ai-panel" id="aiPanel">
+
+        <h3>NGS AI Assistant</h3>
+
+        <p>
+            Ask questions about your assigned training,
+            course requirements, and professional development.
+        </p>
+
+        <button onclick="toggleAI()">Close</button>
+
+    </div>
+
+    <script>
+
+        const searchInput =
+            document.getElementById("trainingSearch");
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        const trainingCards =
+            document.querySelectorAll(".training-card");
+
+        const noResults =
+            document.getElementById("noResults");
+
+        function filterTraining() {
+
+            const searchText = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            let visibleCount = 0;
+
+            trainingCards.forEach(card => {
+
+                const name = card.dataset.name;
+                const status = card.dataset.status;
+
+                const matchesSearch = name.includes(searchText);
+
+                const matchesStatus =
+                    selectedStatus === "all" ||
+                    status === selectedStatus;
+
+                if (matchesSearch && matchesStatus) {
+                    card.style.display = "block";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+
+            });
+
+            if (noResults) {
+                noResults.style.display =
+                    visibleCount === 0 ? "block" : "none";
+            }
+
+        }
+
+        searchInput.addEventListener(
+            "input",
+            filterTraining
+        );
+
+        statusFilter.addEventListener(
+            "change",
+            filterTraining
+        );
+
+        function toggleTraining(button) {
+
+            const details = button.nextElementSibling;
+            const icon = button.querySelector("i");
+
+            const isOpen = details.style.display === "block";
+
+            details.style.display = isOpen ? "none" : "block";
+
+            button.innerHTML = isOpen
+                ? 'View Training <i class="fa-solid fa-chevron-down"></i>'
+                : 'Hide Training <i class="fa-solid fa-chevron-up"></i>';
+
+        }
+
+        function toggleAI() {
+
+            const panel = document.getElementById("aiPanel");
+
+            panel.style.display =
+                panel.style.display === "block" ? "none" : "block";
+
+        }
+
+    </script>
+
+</body>
+</html>

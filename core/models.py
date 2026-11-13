@@ -189,14 +189,54 @@ class Training(models.Model):
         return self.course_name
  
  
+
 class TrainingRecord(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="training_records")
-    training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="training_records")
+
+    STATUS_CHOICES = [
+        ("not_started", "Not Started"),
+        ("in_progress", "In Progress"),
+        ("completed", "Completed"),
+    ]
+
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="training_records"
+    )
+
+    training = models.ForeignKey(
+        Training,
+        on_delete=models.CASCADE,
+        related_name="training_records"
+    )
+
+    due_date = models.DateField(null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="not_started"
+    )
+
     completion_date = models.DateField(null=True, blank=True)
-    
+
+    def save(self, *args, **kwargs):
+        if self.completion_date:
+            self.status = "completed"
+        elif self.status == "completed":
+            self.status = "not_started"
+
+        super().save(*args, **kwargs)
+
     class Meta:
         unique_together = ("employee", "training")
-    
+
+    def __str__(self):
+        return f"{self.employee} - {self.training}"
+
+    class Meta:
+        unique_together = ("employee", "training")
+
     def __str__(self):
         return f"{self.employee} - {self.training}"
  
