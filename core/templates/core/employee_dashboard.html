@@ -24,13 +24,15 @@
 
         header {
             background: #29483C;
-            color: white;
+            color: #F7F4EC;
             padding: 25px 35px;
         }
 
         header h1 {
             margin: 0;
         }
+
+        /* Main Content */
 
         main {
             padding: 30px 35px;
@@ -122,29 +124,7 @@
             grid-column: 1 / -1;
         }
 
-        /* Mobile Layout */
-        @media (max-width: 650px) {
-            main {
-                padding: 20px;
-            }
-
-            header {
-                padding: 20px;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .wide-card {
-                grid-column: auto;
-            }
-
-            .welcome-bar {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-        }
+    
     </style>
 </head>
 
