@@ -190,6 +190,27 @@
             color: #777;
         }
 
+        /* Skills Gap Button */
+        .skills-gap-button {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }   
+
+        .skills-gap-button:hover {
+            background: #527B63;
+        }
+
         /* Ask AI Button */
         .ask-ai-button {
             position: fixed;
@@ -246,36 +267,6 @@
             cursor: pointer;
         }
 
-        /* Mobile Layout */
-        @media (max-width: 650px) {
-            main {
-                padding: 20px 15px 100px;
-            }
-
-            header {
-                padding: 20px;
-            }
-
-            .navigation {
-                flex-wrap: wrap;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .skill-card {
-                padding: 20px;
-            }
-
-            .filter-section {
-                flex-wrap: wrap;
-            }
-        }
     </style>
 </head>
 
@@ -293,7 +284,6 @@
             <a href="{% url 'employee_dashboard' %}" class="back-button">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </a>
-
             <input
                 type="text"
                 id="skillSearch"
@@ -306,9 +296,6 @@
         <!-- Proficiency Filter -->
         <section class="filter-section">
 
-            <label for="proficiencyFilter">
-                Filter by proficiency:
-            </label>
 
             <select id="proficiencyFilter">
                 <option value="all">All</option>
@@ -369,6 +356,11 @@
 
     </main>
 
+    <!--skills gap button-->
+    <a href="{% url 'employee_skills_gap' %}" class="skills-gap-button">
+        <i class="fa-solid fa-chart-line"></i> View Skills Gap
+    </a>
+
     <!-- Ask AI Button -->
     <button class="ask-ai-button" onclick="toggleAI()">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -379,11 +371,6 @@
     <div class="ai-panel" id="aiPanel">
 
         <h3>NGS AI Assistant</h3>
-
-        <p>
-            Ask questions about your professional skills,
-            proficiency levels, and development opportunities.
-        </p>
 
         <p>
             The AI assistant will help identify skill gaps

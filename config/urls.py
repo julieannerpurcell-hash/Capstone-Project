@@ -11,6 +11,7 @@ urlpatterns = [
     path('employee/', views.employee_dashboard, name='employee_dashboard'),
     path('employee/profile/', views.employee_profile, name='employee_profile'),
     path('employee/skills/', views.employee_skills, name='employee_skills'),
+    path('employee/skills-gap/', views.employee_skills_gap, name='employee_skills_gap'),
     path('employee/certifications/', views.employee_certifications, name='employee_certifications'),
     path('employee/training/',views.employee_training, name='employee_training'),
     path('employee/development/', views.employee_development, name='employee_development'),

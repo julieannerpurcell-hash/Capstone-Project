@@ -262,38 +262,6 @@
             border-radius: 6px;
             cursor: pointer;
         }
-
-        @media (max-width: 650px) {
-            main {
-                padding: 20px 15px 100px;
-            }
-
-            header {
-                padding: 20px;
-            }
-
-            .navigation {
-                flex-wrap: wrap;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .filter-section {
-                flex-wrap: wrap;
-            }
-
-            .training-card-top {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .training-details {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
     </style>
 </head>
 
@@ -325,8 +293,6 @@
         <!-- Status Filter -->
 
         <section class="filter-section">
-
-            <label for="statusFilter">Filter by status:</label>
 
             <select id="statusFilter">
                 <option value="all">All</option>

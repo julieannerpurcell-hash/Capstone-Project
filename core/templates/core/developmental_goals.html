@@ -74,40 +74,62 @@
             margin: 0 0 6px;
         }
 
-        .development-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .section-heading p {
+            color: #777;
+            font-size: 14px;
         }
 
         .development-card {
             background: white;
-            padding: 20px 24px;
-            border-radius: 12px;
             border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
         }
 
-        .development-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
+        .development-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
         }
 
-        .development-info h3 {
-            margin: 0 0 12px;
-        }
-
-        .development-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            font-size: 13px;
+        .development-card p {
+            font-size: 14px;
             color: #666;
         }
 
-        .development-details strong {
-            color: #29483C;
+        .goal-training {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #DDD5C5;
+        }
+
+        .goal-training h4 {
+            margin: 0 0 12px;
+        }
+
+        .training-item {
+            background: #F7F4EC;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .training-item p {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .training-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .no-training {
+            color: #777;
+            font-size: 13px;
         }
 
         .empty-message {
@@ -194,7 +216,7 @@
             cursor: pointer;
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 600px) {
             main {
                 padding: 20px 15px 100px;
             }
@@ -210,17 +232,8 @@
             .search-box {
                 width: 100%;
             }
-
-            .development-card-top {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .development-details {
-                flex-direction: column;
-                gap: 8px;
-            }
         }
+
     </style>
 </head>
 
@@ -249,70 +262,122 @@
 
         </section>
 
+
         <!-- Development Goals -->
 
-        <section>
+        <section class="development-goals">
 
-            <div class="development-grid" id="developmentGrid">
+            <div class="section-heading">
+                <h2>My Professional Development Goals</h2>
+            </div>
 
-                {% for item in development_goals %}
+            {% for goal in development_goals %}
 
-                    <div class="development-card"
-                         data-name="{{ item.skill.name|lower }}">
+                <div class="development-card"
+                     data-name="{{ goal.skill.name|lower }}">
 
-                        <div class="development-card-top">
+                    <h3>{{ goal.skill.name }}</h3>
 
-                            <div class="development-info">
+                    <p>
+                        <strong>Status:</strong>
+                        {{ goal.get_status_display }}
+                    </p>
 
-                                <h3>{{ item.skill.name }}</h3>
+                    <p>
+                        <strong>Target Date:</strong>
 
-                                <div class="development-details">
+                        {% if goal.target_date %}
+                            {{ goal.target_date|date:"F d, Y" }}
+                        {% else %}
+                            Not set
+                        {% endif %}
+                    </p>
+
+
+                    <!-- Recommended Training -->
+
+                    <div class="goal-training">
+
+                        <h4>
+                            Recommended Training
+                        </h4>
+
+                        {% for training in goal.recommended_training %}
+
+                            <div class="training-item">
+
+                                <strong>{{ training.course_name }}</strong>
+
+                                <p>
+                                    {{ training.description|default:"No course description available." }}
+                                </p>
+
+                                <div class="training-details">
+
+                                    {% if training.provider %}
+                                        <span>
+                                            <strong>Provider:</strong>
+                                            {{ training.provider }}
+                                        </span>
+                                    {% endif %}
 
                                     <span>
-                                        <strong>Target Date:</strong>
-
-                                        {% if item.target_date %}
-                                            {{ item.target_date|date:"M d, Y" }}
-                                        {% else %}
-                                            Not set
-                                        {% endif %}
+                                        <strong>Delivery:</strong>
+                                        {{ training.get_delivery_method_display }}
                                     </span>
+
+                                    {% if training.duration_hours %}
+                                        <span>
+                                            <strong>Duration:</strong>
+                                            {{ training.duration_hours }} hours
+                                        </span>
+                                    {% endif %}
 
                                 </div>
 
                             </div>
 
-                        </div>
+                        {% empty %}
+
+                            <p class="no-training">
+                                No training recommendations available.
+                            </p>
+
+                        {% endfor %}
 
                     </div>
 
-                {% empty %}
-
-                    <div class="empty-message">
-                        You do not have any professional development goals yet.
-                    </div>
-
-                {% endfor %}
-
-                <div class="empty-message" id="noResults"
-                     style="display: none;">
-                    No development goals match your search.
                 </div>
 
-            </div>
+            {% empty %}
 
-            <!-- Edit Goals Button -->
+                <div class="empty-message">
+                    You haven't added any development goals yet.
+                </div>
 
-            <div class="edit-section">
-                <button type="button" class="edit-button">
-                    <i class="fa-solid fa-pen"></i>
-                    Edit Goals
-                </button>
+            {% endfor %}
+
+            <!-- No Search Results -->
+
+            <div id="noResults" class="empty-message"
+                 style="display: none;">
+                No matching development goals found.
             </div>
 
         </section>
 
+
+        <!-- Edit Goals Button -->
+
+        <div class="edit-section">
+            <button type="button" class="edit-button">
+                <i class="fa-solid fa-pen"></i>
+                Edit Goals
+            </button>
+        </div>
+
     </main>
+
 
     <!-- Ask AI Button -->
 
@@ -334,6 +399,9 @@
 
     </div>
 
+
+    <!-- JavaScript -->
+
     <script>
 
         const searchInput =
@@ -347,29 +415,38 @@
 
         searchInput.addEventListener("input", function() {
 
-            const searchText = searchInput.value.toLowerCase();
+            const searchText = searchInput.value.toLowerCase().trim();
 
             let visibleCount = 0;
 
             developmentCards.forEach(card => {
 
-                const name = card.dataset.name;
+                const name = card.dataset.name || "";
 
                 if (name.includes(searchText)) {
+
                     card.style.display = "block";
                     visibleCount++;
+
                 } else {
+
                     card.style.display = "none";
+
                 }
 
             });
 
             if (noResults) {
+
                 noResults.style.display =
-                    visibleCount === 0 ? "block" : "none";
+                    (visibleCount === 0 && developmentCards.length > 0)
+                    ? "block"
+                    : "none";
+
             }
 
         });
+
 
         function toggleAI() {
 

@@ -4,23 +4,26 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.utils.dateparse import parse_date
 
-from .models import Employee
+from .models import (
+    Employee,
+    JobRoleSkill,
+    JobRoleCertification,
+    Training,
+)
 
 
 def redirect_by_role(user):
     try:
         employee = user.employee_profile
     except Employee.DoesNotExist:
-        logout_user = True
         return redirect('login')
 
     if employee.role == 'employee':
         return redirect('employee_dashboard')
-
     elif employee.role == 'manager':
         return redirect('manager_dashboard')
-
     elif employee.role == 'admin':
         return redirect('admin_dashboard')
 
@@ -28,10 +31,12 @@ def redirect_by_role(user):
 
 
 def login_view(request):
+
     if request.user.is_authenticated:
         return redirect_by_role(request.user)
 
     if request.method == 'POST':
+
         username = request.POST.get('username')
         password = request.POST.get('password')
 
@@ -42,10 +47,14 @@ def login_view(request):
         )
 
         if user is not None:
+
             try:
                 employee = user.employee_profile
             except Employee.DoesNotExist:
-                messages.error(request, 'Employee profile is not set up.')
+                messages.error(
+                    request,
+                    'Employee profile is not set up.'
+                )
                 return render(request, 'core/login.html')
 
             if employee.status != 'active':
@@ -62,14 +71,17 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
+
     if request.method == 'POST':
         logout(request)
         return redirect('login')
 
     return redirect_by_role(request.user)
 
+
 @login_required
 def employee_dashboard(request):
+
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
 
@@ -79,8 +91,10 @@ def employee_dashboard(request):
         'employee': employee
     })
 
+
 @login_required
 def employee_profile(request):
+
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
 
@@ -89,21 +103,26 @@ def employee_profile(request):
     return render(request, 'core/employee_profile.html', {
         'employee': employee
     })
+
+
 @login_required
 def employee_skills(request):
+
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
 
     employee = request.user.employee_profile
 
-    skills = employee.employee_skills.select_related('skill').all()
+    skills = employee.employee_skills.select_related(
+        'skill'
+    ).all()
 
     role_skills = {}
 
     if employee.job_role:
         role_skills = {
-            role_skill.skill_id: role_skill.is_required
-            for role_skill in employee.job_role.required_skills.all()
+            item.skill_id: item.is_required
+            for item in employee.job_role.required_skills.all()
         }
 
     for item in skills:
@@ -114,15 +133,153 @@ def employee_skills(request):
         'skills': skills
     })
 
+
+@login_required
+def employee_skills_gap(request):
+
+    if request.user.employee_profile.role != 'employee':
+        return redirect_by_role(request.user)
+
+    employee = request.user.employee_profile
+
+    skill_gaps = []
+    certification_gaps = []
+
+    employee_skills = {
+        item.skill_id: item
+        for item in employee.employee_skills.select_related(
+            'skill'
+        ).all()
+    }
+
+    if employee.job_role:
+
+        required_skills = JobRoleSkill.objects.filter(
+            job_role=employee.job_role,
+            is_required=True
+        ).select_related('skill')
+
+        for requirement in required_skills:
+
+            current_skill = employee_skills.get(
+                requirement.skill_id
+            )
+
+            if current_skill is None:
+                status = 'Missing'
+                current_level = None
+
+            elif current_skill.proficiency < requirement.required_level:
+                status = 'Below requirement'
+                current_level = current_skill.get_proficiency_display()
+
+            else:
+                status = 'Meets requirement'
+                current_level = current_skill.get_proficiency_display()
+
+            skill_gaps.append({
+                'skill': requirement.skill,
+                'current_level': current_level,
+                'required_level': requirement.get_required_level_display(),
+                'status': status,
+            })
+
+        employee_certifications = {
+            item.certification_id: item
+            for item in employee.certifications.select_related(
+                'certification'
+            ).all()
+        }
+
+        required_certifications = JobRoleCertification.objects.filter(
+            job_role=employee.job_role,
+            is_required=True
+        ).select_related('certification')
+
+        for requirement in required_certifications:
+
+            current_certification = employee_certifications.get(
+                requirement.certification_id
+            )
+
+            if current_certification is None:
+                status = 'Missing'
+
+            else:
+                status = current_certification.status
+
+            certification_gaps.append({
+                'certification': requirement.certification,
+                'status': status,
+                'expiration_date': (
+                    current_certification.expiration_date
+                    if current_certification else None
+                ),
+            })
+
+    # Retrieve professional development goals for Skills Gap Analysis
+    development_goals = employee.development_goals.select_related(
+        'skill'
+    ).all().order_by('target_date')
+
+    context = {
+        'employee': employee,
+        'skill_gaps': skill_gaps,
+        'certification_gaps': certification_gaps,
+        'development_goals': development_goals,
+
+        'total_skills': len(skill_gaps),
+
+        'missing_skills': sum(
+            item['status'] == 'Missing'
+            for item in skill_gaps
+        ),
+
+        'below_requirement': sum(
+            item['status'] == 'Below requirement'
+            for item in skill_gaps
+        ),
+
+        'meeting_requirements': sum(
+            item['status'] == 'Meets requirement'
+            for item in skill_gaps
+        ),
+
+        'missing_certifications': sum(
+            item['status'] == 'Missing'
+            for item in certification_gaps
+        ),
+
+        'expiring_certifications': sum(
+            item['status'] == 'Expiring soon'
+            for item in certification_gaps
+        ),
+
+        'expired_certifications': sum(
+            item['status'] == 'Expired'
+            for item in certification_gaps
+        ),
+    }
+
+    return render(
+        request,
+        'core/employee_skills_gap.html',
+        context
+    )
+
+
 @login_required
 def employee_certifications(request):
+
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
 
     employee = request.user.employee_profile
 
     certifications = list(
-        employee.certifications.select_related('certification').all()
+        employee.certifications.select_related(
+            'certification'
+        ).all()
     )
 
     role_certifications = {}
@@ -141,15 +298,25 @@ def employee_certifications(request):
     return render(request, 'core/employee_certifications.html', {
         'employee': employee,
         'certifications': certifications,
-
         'total_count': len(certifications),
-        'active_count': sum(item.status == 'Active' for item in certifications),
-        'expiring_count': sum(item.status == 'Expiring soon' for item in certifications),
-        'expired_count': sum(item.status == 'Expired' for item in certifications),
+        'active_count': sum(
+            item.status == 'Active'
+            for item in certifications
+        ),
+        'expiring_count': sum(
+            item.status == 'Expiring soon'
+            for item in certifications
+        ),
+        'expired_count': sum(
+            item.status == 'Expired'
+            for item in certifications
+        ),
     })
+
 
 @login_required
 def employee_training(request):
+
     if request.user.employee_profile.role != 'employee':
         return redirect_by_role(request.user)
 
@@ -166,6 +333,8 @@ def employee_training(request):
         'training_records': training_records,
     })
 
+
+
 @login_required
 def employee_development(request):
 
@@ -178,20 +347,80 @@ def employee_development(request):
         'skill'
     ).all().order_by('target_date')
 
-    return render(request, 'core/developmental_goals.html', {
+    if request.method == 'POST':
+
+        for goal in development_goals:
+
+            date_value = request.POST.get(
+                f'target_date_{goal.id}'
+            )
+
+            goal.target_date = (
+                parse_date(date_value)
+                if date_value else None
+            )
+
+            goal.save(update_fields=['target_date'])
+
+        messages.success(
+            request,
+            'Development goals updated successfully.'
+        )
+
+        return redirect('employee_development')
+
+    # Find training that the employee has already completed
+    completed_training_ids = employee.training_records.filter(
+        status='completed'
+    ).values_list('training_id', flat=True)
+
+    # Recommend training for each development goal
+    for goal in development_goals:
+
+        goal.recommended_training = Training.objects.filter(
+            related_skill=goal.skill
+        ).exclude(
+            id__in=completed_training_ids
+        ).distinct()
+
+    context = {
         'employee': employee,
         'development_goals': development_goals,
-    })
+    }
+
+    return render(
+        request,
+        'core/developmental_goals.html',
+        context
+    )
+
 
 @login_required
 def manager_dashboard(request):
+
     if request.user.employee_profile.role != 'manager':
         return redirect_by_role(request.user)
+
     return HttpResponse("Manager Dashboard - Coming Soon")
 
 
 @login_required
 def admin_dashboard(request):
+
     if request.user.employee_profile.role != 'admin':
         return redirect_by_role(request.user)
-    return HttpResponse("Administrator Dashboard - Coming Soon")
+
+    from .models import Department, JobRole, Skill
+
+    context = {
+        'total_employees': Employee.objects.count(),
+        'total_departments': Department.objects.count(),
+        'total_job_roles': JobRole.objects.count(),
+        'total_skills': Skill.objects.count(),
+    }
+
+    return render(
+        request,
+        'core/admin_dashboard.html',
+        context
+    )

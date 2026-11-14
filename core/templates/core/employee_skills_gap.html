@@ -1,0 +1,636 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Gap Analysis | NGS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+        }
+
+        header {
+            background: #29483C;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 30px 35px 100px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            color: #29483C;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            color: #8FAF9B;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .page-intro h2 {
+            margin-bottom: 8px;
+        }
+
+        .page-intro p {
+            color: #777;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Summary Cards */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #DDD5C5;
+        }
+
+        .summary-card p {
+            color: #777;
+            font-size: 13px;
+            margin: 0 0 10px;
+        }
+
+        .summary-card h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        /* Section Layout */
+
+        .content-section {
+            margin-bottom: 30px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .section-heading i {
+            font-size: 18px;
+        }
+
+        .section-description {
+            color: #777;
+            font-size: 14px;
+            margin: -5px 0 15px;
+        }
+
+        /* Search and Filter */
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .search-box,
+        .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            background: white;
+            color: #29483C;
+            font-size: 14px;
+        }
+
+        .search-box {
+            width: 250px;
+        }
+
+        /* Information Cards */
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid #EEE8DC;
+        }
+
+        .item-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .item-info p {
+            color: #777;
+            font-size: 13px;
+            margin: 6px 0 0;
+            line-height: 1.5;
+        }
+
+        /* Status Labels */
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .missing {
+            background: #F5E1DD;
+            color: #9B493C;
+        }
+
+        .below {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .meets {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        .expired {
+            background: #F5E1DD;
+            color: #9B493C;
+        }
+
+        .expiring {
+            background: #F5EBD7;
+            color: #8A682B;
+        }
+
+        .active {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        .not-started {
+            background: #EEEEEE;
+            color: #666;
+        }
+
+        .in-progress {
+            background: #E8EEE8;
+            color: #527B63;
+        }
+
+        .complete {
+            background: #DCE9DF;
+            color: #29483C;
+        }
+
+        /* Empty Messages */
+
+        .empty-message {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* Training Details */
+
+        .training-details {
+            margin-top: 8px;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Ask AI */
+
+        .ask-ai-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #29483C;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #00000030;
+            z-index: 10;
+        }
+
+        .ask-ai-button:hover {
+            background: #527B63;
+        }
+
+        .ai-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px #00000025;
+            z-index: 10;
+        }
+
+        .ai-panel h3 {
+            margin-top: 0;
+        }
+
+        .ai-panel p {
+            color: #777;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .ai-panel button {
+            background: #29483C;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Skills Gap Analysis</h1>
+</header>
+
+<main>
+
+    <!-- Navigation & Search-->
+
+    <section class="navigation">
+        <a href="{% url 'employee_dashboard' %}" class="back-button">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
+        <input
+                type="text"
+                id="skillSearch"
+                class="search-box"
+                placeholder="Search my skills..."
+            >
+    </section>
+
+    <!-- Page Introduction -->
+
+    <section class="page-intro">
+        <h2>My Skills Gap Analysis</h2>
+
+    </section>
+
+    <!-- Summary Cards -->
+
+    <section class="summary-grid">
+
+        <div class="summary-card">
+            <p>Required Skills</p>
+            <h2>{{ total_skills }}</h2>
+        </div>
+
+        <div class="summary-card">
+            <p>Missing Skills</p>
+            <h2>{{ missing_skills }}</h2>
+        </div>
+
+        <div class="summary-card">
+            <p>Below Required Level</p>
+            <h2>{{ below_requirement }}</h2>
+        </div>
+
+        <div class="summary-card">
+            <p>Meeting Requirements</p>
+            <h2>{{ meeting_requirements }}</h2>
+        </div>
+
+    </section>
+
+    <!-- Skills Analysis -->
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Skill Requirements</h2>
+        </div>
+
+
+        <div class="filter-section">
+
+
+            <select id="skillFilter">
+                <option value="all">All</option>
+                <option value="missing">Missing</option>
+                <option value="below requirement">Below requirement</option>
+                <option value="meets requirement">Meets requirement</option>
+            </select>
+
+        </div>
+
+        <div class="item-list" id="skillList">
+
+            {% for item in skill_gaps %}
+
+                <div class="item-card skill-card"
+                     data-name="{{ item.skill.name|lower }}"
+                     data-status="{{ item.status|lower }}">
+
+                    <div class="item-info">
+                        <h3>{{ item.skill.name }}</h3>
+
+                        <p>
+                            Current:
+                            {{ item.current_level|default:"Not recorded" }}
+                            <br>
+                            Required: {{ item.required_level }}
+                        </p>
+                    </div>
+
+                    <span class="status
+                        {% if item.status == 'Missing' %}
+                            missing
+                        {% elif item.status == 'Below requirement' %}
+                            below
+                        {% else %}
+                            meets
+                        {% endif %}">
+                        {{ item.status }}
+                    </span>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-message">
+                    No required skills were found for your job role.
+                </div>
+
+            {% endfor %}
+
+            <div class="empty-message" id="noSkillResults"
+                 style="display: none;">
+                No skills match your search or filter.
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Certification Analysis -->
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>Certification Requirements</h2>
+        </div>
+
+        <div class="item-list">
+
+            {% for item in certification_gaps %}
+
+                <div class="item-card">
+
+                    <div class="item-info">
+                        <h3>{{ item.certification.name }}</h3>
+
+                        <p>
+                            {% if item.expiration_date %}
+                                Expiration date:
+                                {{ item.expiration_date|date:"M d, Y" }}
+                            {% else %}
+                                No expiration date recorded
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <span class="status
+                        {% if item.status == 'Missing' %}
+                            missing
+                        {% elif item.status == 'Expired' %}
+                            expired
+                        {% elif item.status == 'Expiring soon' %}
+                            expiring
+                        {% else %}
+                            active
+                        {% endif %}">
+                        {{ item.status }}
+                    </span>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-message">
+                    No certification requirements were found for your job role.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- Professional Development Goals -->
+
+    <section class="content-section">
+
+        <div class="section-heading">
+            <h2>My Professional Development Goals</h2>
+        </div>
+
+        <div class="item-list">
+
+            {% for goal in development_goals %}
+
+                <div class="item-card">
+
+                    <div class="item-info">
+                        <h3>{{ goal.skill.name }}</h3>
+
+                        <p>
+                            Target date:
+                            {% if goal.target_date %}
+                                {{ goal.target_date|date:"M d, Y" }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <span class="status
+                        {% if goal.status == 'complete' %}
+                            complete
+                        {% elif goal.status == 'in_progress' %}
+                            in-progress
+                        {% else %}
+                            not-started
+                        {% endif %}">
+                        {{ goal.get_status_display }}
+                    </span>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-message">
+                    You have not created any professional development goals yet.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Ask AI Button -->
+
+<button class="ask-ai-button" onclick="toggleAI()">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    Ask AI
+</button>
+
+<!-- AI Assistant Panel -->
+
+<div class="ai-panel" id="aiPanel">
+
+    <h3>NGS AI Assistant</h3>
+
+    <p>
+        Get help understanding your skill gaps, certification
+        requirements, and professional development opportunities.
+    </p>
+
+    <p>
+        Recommendations should be reviewed before making
+        professional development decisions.
+    </p>
+
+    <button onclick="toggleAI()">Close</button>
+
+</div>
+
+<!-- Search, Filter, and AI Functions -->
+
+<script>
+
+    const searchInput = document.getElementById("skillSearch");
+    const skillFilter = document.getElementById("skillFilter");
+    const skillCards = document.querySelectorAll(".skill-card");
+    const noSkillResults = document.getElementById("noSkillResults");
+
+    function filterSkills() {
+
+        const searchText = searchInput.value.toLowerCase();
+        const selectedStatus = skillFilter.value;
+
+        let visibleCount = 0;
+
+        skillCards.forEach(card => {
+
+            const skillName = card.dataset.name;
+            const status = card.dataset.status;
+
+            const matchesSearch = skillName.includes(searchText);
+
+            const matchesFilter =
+                selectedStatus === "all" ||
+                status === selectedStatus;
+
+            if (matchesSearch && matchesFilter) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+
+        });
+
+        noSkillResults.style.display =
+            visibleCount === 0 ? "block" : "none";
+
+    }
+
+    searchInput.addEventListener("input", filterSkills);
+    skillFilter.addEventListener("change", filterSkills);
+
+    function toggleAI() {
+
+        const panel = document.getElementById("aiPanel");
+
+        panel.style.display =
+            panel.style.display === "block" ? "none" : "block";
+
+    }
+
+</script>
+
+</body>
+</html>
