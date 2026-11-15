@@ -333,17 +333,30 @@
 
         <section class="dashboard-grid">
 
-            <a href="/admin/core/certification/" class="dashboard-card">
+                       <a href="{% url 'admin_certifications' %}" class="dashboard-card">
 
                 <div class="icon">
                     <i class="fa-solid fa-award"></i>
                 </div>
 
                 <div>
-                    <h3>Manage Certifications</h3>
+                    <h3>Employee Certifications</h3>
                 </div>
 
             </a>
+
+
+            <a href="/admin/core/certification/" class="dashboard-card">
+
+                <div class="icon">
+                    <i class="fa-solid fa-list"></i>
+                </div>
+
+                <div>
+                    <h3>Certification Catalog</h3>
+                </div>
+
+            </a> 
 
 
             <a href="/admin/core/training/" class="dashboard-card">

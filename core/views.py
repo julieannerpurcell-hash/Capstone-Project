@@ -31,8 +31,10 @@ def redirect_by_role(user):
 
 
 def login_view(request):
-
-    if request.user.is_authenticated:
+    if (
+        request.user.is_authenticated
+        and getattr(request.user, 'employee_profile', None) is not None
+    ):
         return redirect_by_role(request.user)
 
     if request.method == 'POST':

@@ -1,0 +1,19 @@
+{% extends "core/cert_base.html" %}
+{% block title %}Delete certification{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Delete certification record?</h1>
+    <a class="back-link" href="{% url 'admin_certifications' %}">Back to Certifications</a>
+</div>
+
+<div class="panel">
+    <p>This will permanently remove <strong>{{ record.certification.name }}</strong> from
+       <strong>{{ record.employee.name }}</strong>. This cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn danger" type="submit">Yes, delete</button>
+        <a class="btn secondary" href="{% url 'admin_certifications' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

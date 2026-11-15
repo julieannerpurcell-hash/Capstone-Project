@@ -1,0 +1,31 @@
+{% extends "core/cert_base.html" %}
+{% block title %}{{ mode }} certification{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div>
+        <h1>{{ mode }} employee certification</h1>
+        <p>Pick the employee and the certification from the catalog. Need a new certification type? Add it under Certifications in the admin panel first.</p>
+    </div>
+    <a class="back-link" href="{% url 'admin_certifications' %}">Back to Certifications</a>
+</div>
+
+<div class="panel">
+    <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+
+        {% for field in form %}
+        <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+
+        <button class="btn" type="submit">Save</button>
+        <a class="btn secondary" href="{% url 'admin_certifications' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

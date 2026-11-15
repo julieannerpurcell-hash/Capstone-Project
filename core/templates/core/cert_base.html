@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Certifications{% endblock %}</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f2; margin: 0; padding: 30px; color: #333; }
+        .container { max-width: 1200px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .header h1 { margin: 0 0 4px; }
+        .header p { margin: 0; color: #666; }
+        .back-link { color: #315b45; text-decoration: none; font-weight: bold; }
+        .btn { display: inline-block; background: #315b45; color: white; border: 0; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: bold; text-decoration: none; cursor: pointer; }
+        .btn.secondary { background: white; color: #315b45; border: 1px solid #315b45; }
+        .btn.danger { background: #b42318; }
+        .messages { list-style: none; padding: 0; margin: 0 0 15px; }
+        .messages li { background: #e7f4ec; border: 1px solid #267347; color: #1d5a37; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; }
+        .messages li.error { background: #fdecea; border-color: #b42318; color: #b42318; }
+        .banner { background: #fff4cc; border: 1px solid #b58900; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-weight: bold; }
+        .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .summary-card { background: white; padding: 16px 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .summary-card h3 { font-size: 14px; color: #666; margin: 0; }
+        .summary-card p { font-size: 28px; font-weight: bold; margin: 6px 0 0; }
+        .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .filters input, .filters select { padding: 9px 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 14px; background: white; }
+        .filters input[type=search] { min-width: 260px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; white-space: nowrap; }
+        th { background: #315b45; color: white; }
+        .pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; border: 1px solid; }
+        .pill.active { background: #e6f4e6; color: #1d5a37; border-color: #2b7a2b; }
+        .pill.soon { background: #fff4cc; color: #7a5a00; border-color: #b58900; }
+        .pill.expired { background: #fdecea; color: #b42318; border-color: #b42318; border-style: dashed; }
+        .actions a { color: #315b45; font-weight: bold; text-decoration: none; }
+        .actions a.delete { color: #b42318; }
+        .empty { padding: 30px; text-align: center; color: #666; }
+        .pager { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; color: #555; flex-wrap: wrap; gap: 10px; }
+        .pager a { color: #315b45; font-weight: bold; text-decoration: none; margin: 0 6px; }
+        .form-row { margin-bottom: 18px; }
+        .form-row label { display: block; font-weight: bold; margin-bottom: 6px; }
+        .form-row input, .form-row select { padding: 10px; border: 1px solid #bbb; border-radius: 6px; font-size: 15px; min-width: 280px; }
+        .help { color: #666; font-size: 13px; margin-top: 4px; }
+        .errorlist { list-style: none; padding: 0; margin: 4px 0 0; color: #b42318; font-weight: bold; font-size: 14px; }
+        @media (max-width: 800px) { .summary { grid-template-columns: repeat(2, 1fr); } body { padding: 16px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
