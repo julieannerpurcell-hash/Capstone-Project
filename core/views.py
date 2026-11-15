@@ -217,7 +217,6 @@ def employee_skills_gap(request):
                 ),
             })
 
-    # Retrieve professional development goals for Skills Gap Analysis
     development_goals = employee.development_goals.select_related(
         'skill'
     ).all().order_by('target_date')
@@ -369,12 +368,10 @@ def employee_development(request):
 
         return redirect('employee_development')
 
-    # Find training that the employee has already completed
     completed_training_ids = employee.training_records.filter(
         status='completed'
     ).values_list('training_id', flat=True)
 
-    # Recommend training for each development goal
     for goal in development_goals:
 
         goal.recommended_training = Training.objects.filter(
@@ -424,3 +421,71 @@ def admin_dashboard(request):
         'core/admin_dashboard.html',
         context
     )
+@login_required
+def admin_reports(request):
+    if request.user.employee_profile.role != "admin":
+        return redirect_by_role(request.user)
+
+    employees = (
+        Employee.objects
+        .filter(status="active", job_role__isnull=False)
+        .select_related("department", "job_role")
+        .prefetch_related(
+            "employee_skills__skill",
+            "job_role__required_skills__skill"
+        )
+        .order_by("department__name", "name")
+    )
+
+    report_rows = []
+
+    total_gaps = 0
+    employees_with_gaps = set()
+    employees_evaluated = employees.count()
+
+    for employee in employees:
+        current_skills = {
+            employee_skill.skill_id: employee_skill
+            for employee_skill in employee.employee_skills.all()
+        }
+
+        for requirement in employee.job_role.required_skills.all():
+            if not requirement.is_required:
+                continue
+
+            employee_skill = current_skills.get(requirement.skill_id)
+
+            if employee_skill is None:
+                current_level = "Not recorded"
+                result = "Missing Skill"
+                total_gaps += 1
+                employees_with_gaps.add(employee.id)
+
+            else:
+                current_level = employee_skill.get_proficiency_display()
+
+                if employee_skill.proficiency < requirement.required_level:
+                    result = "Below Required Level"
+                    total_gaps += 1
+                    employees_with_gaps.add(employee.id)
+                else:
+                    result = "Meets Requirement"
+
+            report_rows.append({
+                "employee": employee.name,
+                "department": employee.department.name if employee.department else "Not assigned",
+                "job_role": employee.job_role.title,
+                "skill": requirement.skill.name,
+                "current_level": current_level,
+                "required_level": requirement.get_required_level_display(),
+                "result": result,
+            })
+
+    context = {
+        "report_rows": report_rows,
+        "employees_evaluated": employees_evaluated,
+        "total_gaps": total_gaps,
+        "employees_with_gaps": len(employees_with_gaps),
+    }
+
+    return render(request, "core/admin_reports.html", context)

@@ -95,12 +95,12 @@
 <form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
 
-    <label for="username">Employee ID</label>
+    <label for="username">ID</label>
     <input
         type="text"
         id="username"
         name="username"
-        placeholder="Enter your Employee ID"
+        placeholder="Enter your ID number"
         required
     >
 
