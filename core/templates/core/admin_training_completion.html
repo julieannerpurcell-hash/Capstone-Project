@@ -1,0 +1,78 @@
+{% extends "core/cert_base.html" %}
+{% block title %}Training Completion Report{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div>
+        <h1>Training Completion Report</h1>
+        <p>Training assigned to employees and how much of it has been completed.</p>
+    </div>
+    <div>
+        <a class="back-link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        &nbsp;&nbsp;
+        <a class="btn" href="?{{ export_query }}">Download CSV</a>
+    </div>
+</div>
+
+<div class="summary" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="summary-card"><h3>Completion rate</h3><p>{{ rate }}%</p></div>
+    <div class="summary-card"><h3>Completed</h3><p>{{ completed_count }} of {{ total }}</p></div>
+    <div class="summary-card"><h3>In progress</h3><p>{{ in_progress_count }}</p></div>
+    <div class="summary-card"><h3>Overdue</h3><p>{{ overdue_count }}</p></div>
+</div>
+
+<div class="panel">
+    <form method="get" class="filters">
+        <select name="status" aria-label="Status">
+            <option value="">All statuses</option>
+            <option value="Completed" {% if status == "Completed" %}selected{% endif %}>Completed</option>
+            <option value="In progress" {% if status == "In progress" %}selected{% endif %}>In progress</option>
+            <option value="Not started" {% if status == "Not started" %}selected{% endif %}>Not started</option>
+            <option value="Overdue" {% if status == "Overdue" %}selected{% endif %}>Overdue</option>
+        </select>
+
+        <select name="department" aria-label="Department">
+            <option value="">All departments</option>
+            {% for d in departments %}
+            <option value="{{ d.id }}" {% if department == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button class="btn" type="submit">Filter</button>
+        <a class="btn secondary" href="{% url 'admin_training_completion' %}">Clear</a>
+    </form>
+
+    {% if rows %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee</th><th>Department</th><th>Course</th><th>Provider</th>
+                    <th>Due</th><th>Completed on</th><th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r.employee }}</td>
+                    <td>{{ r.department }}</td>
+                    <td>{{ r.course }}</td>
+                    <td>{{ r.provider }}</td>
+                    <td>{{ r.due_date|date:"m/d/Y"|default:"-" }}</td>
+                    <td>{{ r.completion_date|date:"m/d/Y"|default:"-" }}</td>
+                    <td>
+                        {% if r.status == "Completed" %}<span class="pill active">Completed</span>
+                        {% elif r.status == "Overdue" %}<span class="pill expired">Overdue</span>
+                        {% elif r.status == "In progress" %}<span class="pill soon">In progress</span>
+                        {% else %}<span class="pill">Not started</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">No training records match your filters.</div>
+    {% endif %}
+</div>
+{% endblock %}
