@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from core import views, cert_views, report_views
+from core import views, cert_views, report_views, training_report_views
 
 urlpatterns = [
     path('', views.login_view, name='login'),
@@ -19,6 +19,7 @@ urlpatterns = [
     path('administrator/', views.admin_dashboard, name='admin_dashboard'),
     path('administrator/reports/', views.admin_reports, name='admin_reports'),
         path('administrator/reports/certification-expiration/', report_views.admin_certification_expiration, name='admin_certification_expiration'),
+        path('administrator/reports/training-completion/', training_report_views.admin_training_completion, name='admin_training_completion'),
         path('administrator/certifications/', cert_views.admin_certifications, name='admin_certifications'),
     path('administrator/certifications/add/', cert_views.admin_certification_add, name='admin_certification_add'),
     path('administrator/certifications/<int:pk>/edit/', cert_views.admin_certification_edit, name='admin_certification_edit'),
