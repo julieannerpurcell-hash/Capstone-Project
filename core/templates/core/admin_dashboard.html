@@ -135,42 +135,6 @@
             color: #29483C;
         }
 
-        /* Reports */
-
-        .coming-soon {
-            background: white;
-            border: 1px solid #DDD5C5;
-            border-radius: 10px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            min-height: 120px;
-        }
-
-        .coming-soon h3 {
-            margin: 0 0 8px;
-            font-size: 16px;
-        }
-
-        .coming-soon p {
-            margin: 0;
-            color: #777;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .coming-label {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 5px 10px;
-            background: #E8EEE8;
-            color: #527B63;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
         /* System Administration */
 
         .system-link {
@@ -178,11 +142,14 @@
             align-items: center;
             gap: 20px;
             background: white;
+            border: 1px solid #DDD5C5;
             color: #29483C;
             padding: 23px;
             border-radius: 10px;
             text-decoration: none;
-            margin-top: 35px;
+            margin-top: 0;
+            min-height: 120px;
+            transition: 0.2s;
         }
 
         .system-link .icon {
@@ -195,20 +162,38 @@
 
         .system-link h3 {
             margin: 0 0 7px;
+            font-size: 16px;
         }
 
         .system-link p {
             margin: 0;
-            color: #29483C;
+            color: #777;
             font-size: 14px;
+            line-height: 1.5;
         }
 
         .system-link:hover {
-            background: white;
+            border-color: #8FAF9B;
             transform: translateY(-3px);
         }
 
-        
+        /* Responsive Layout */
+
+        @media (max-width: 700px) {
+
+            main {
+                padding: 25px 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-bar {
+                align-items: flex-start;
+            }
+
+        }
 
     </style>
 
@@ -231,7 +216,7 @@
 
             <h2>
                 Welcome Back,
-                {{ user.first_name|default:user.username }} {{user.last_name|default:'' }}!
+                {{ user.first_name|default:user.username }} {{ user.last_name|default:'' }}!
             </h2>
 
             <form method="POST" action="{% url 'logout' %}">
@@ -246,177 +231,9 @@
         </div>
 
 
-        <!-- Workforce Management -->
-
-        <h2 class="section-title">Workforce Management</h2>
-
-        <section class="dashboard-grid">
-
-            <a href="/admin/core/employee/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-
-                <div>
-                    <h3>Manage Users</h3>
-                </div>
-
-            </a>
-
-
-            <a href="/admin/core/department/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-building"></i>
-                </div>
-
-                <div>
-                    <h3>Manage Departments</h3>
-                </div>
-
-            </a>
-
-
-            <a href="/admin/core/jobrole/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-briefcase"></i>
-                </div>
-
-                <div>
-                    <h3>Manage Job Roles</h3>
-                </div>
-
-            </a>
-
-        </section>
-
-
-        <!-- Skills Management -->
-
-        <h2 class="section-title">Skills Management</h2>
-
-        <section class="dashboard-grid">
-
-            <a href="/admin/core/skill/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-lightbulb"></i>
-                </div>
-
-                <div>
-                    <h3>Manage Skills</h3>
-                </div>
-
-            </a>
-
-
-            <a href="/admin/core/jobroleskill/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-list-check"></i>
-                </div>
-
-                <div>
-                    <h3>Job Role Skills</h3>
-                </div>
-
-            </a>
-
-        </section>
-
-
-        <!--Certifications and Training-->
-
-        <h2 class="section-title"> Certifications &amp; Training</h2>
-
-        <section class="dashboard-grid">
-
-                       <a href="{% url 'admin_certifications' %}" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-award"></i>
-                </div>
-
-                <div>
-                    <h3>Employee Certifications</h3>
-                </div>
-
-            </a>
-
-
-            <a href="/admin/core/certification/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-list"></i>
-                </div>
-
-                <div>
-                    <h3>Certification Catalog</h3>
-                </div>
-
-            </a> 
-
-
-            <a href="/admin/core/training/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-
-                <div>
-                    <h3>Training Opportunities</h3>
-                </div>
-
-            </a>
-
-        </section>
-
-
-        <!-- System and Reports -->
-
-        <h2 class="section-title">System &amp; Reports</h2>
-
-        <section class="dashboard-grid">
-
-            <a href="/admin/" class="dashboard-card">
-
-                <div class="icon">
-                    <i class="fa-solid fa-gear"></i>
-                </div>
-
-                <div>
-                    <h3>Reference Data</h3>
-                </div>
-
-            </a>
-
-
-            <div class="coming-soon">
-
-                <div class="icon">
-                    <i class="fa-solid fa-chart-pie"></i>
-                </div>
-
-                <div>
-                    <h3>Organization Reports</h3>
-
-                    <a href="{% url 'admin_reports' %}" class="dashboard-card">
-                    <h3>Skills Gap Report</h3>
-            </a>
-            
-                    <a href="{% url 'admin_certification_expiration' %}" class="dashboard-card">
-                    <h3>Certification Expiration Report</h3>
-            </a>
-                </div>
-
-            </div>
-
-        </section>
-
-
         <!-- System Administration -->
+
+        <h2 class="section-title">System Administration</h2>
 
         <a href="/admin/" class="system-link">
 
@@ -426,9 +243,62 @@
 
             <div>
                 <h3>System Administration</h3>
+                <p>Manage users, departments, job roles, skills, certifications, training, and system information.</p>
             </div>
 
         </a>
+
+
+        <!-- Organization Reports -->
+
+        <h2 class="section-title">Organization Reports</h2>
+
+        <section class="dashboard-grid">
+
+            <!-- Skills Gap Report -->
+
+            <a href="{% url 'admin_reports' %}" class="dashboard-card">
+
+                <div class="icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+
+                <div>
+                    <h3>Skills Gap Report</h3>
+                </div>
+
+            </a>
+
+
+            <!-- Certification Expiration Report -->
+
+            <a href="{% url 'admin_certification_expiration' %}" class="dashboard-card">
+
+                <div class="icon">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div>
+                    <h3>Certification Expiration Report</h3>
+                </div>
+
+            </a>
+
+            <!-- Training and Development Report -->
+
+            <a href="#" class="dashboard-card">
+
+                <div class="icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div>
+                    <h3>Training &amp; Development Report</h3>
+                </div>
+
+            </a>
+
+        </section>
 
     </main>
 

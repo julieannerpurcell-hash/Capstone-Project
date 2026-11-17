@@ -1,130 +1,299 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Organization-Wide Reports</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Gap Report | NGS</title>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f2;
+            background: #F7F4EC;
             margin: 0;
-            padding: 30px;
-            color: #333;
+            color: #29483C;
         }
 
         .container {
             max-width: 1200px;
             margin: auto;
+            padding: 25px 30px;
         }
 
+        /* Header */
+
         .header {
+            background: #29483C;
+            color: #F7F4EC;
+            padding: 22px 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .back-link {
-            color: #315b45;
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #E4EADF;
+        }
+
+        /* Back Button */
+
+        .back-button {
+            background: #527B63;
+            color: white;
             text-decoration: none;
             font-weight: bold;
+            padding: 10px 17px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
         }
+
+        .back-button:hover {
+            background: #6B9279;
+        }
+
+        /* Summary Cards */
 
         .summary {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .summary-card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            padding: 15px 18px;
+            border-radius: 8px;
+            border: 1px solid #DDD5C5;
         }
 
         .summary-card h3 {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
+            font-weight: normal;
+            margin: 0 0 6px;
         }
 
         .summary-card p {
-            font-size: 28px;
+            font-size: 25px;
             font-weight: bold;
-            margin: 5px 0;
+            margin: 0;
+            color: #29483C;
         }
+
+        /* Report Section */
 
         .report-section {
             background: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
+            border: 1px solid #DDD5C5;
+        }
+
+        .section-heading {
+            margin-bottom: 12px;
+        }
+
+        .section-heading h2 {
+            color: #29483C;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .section-heading p {
+            color: #777;
+            font-size: 12px;
+            margin: 4px 0 0;
+        }
+
+        /* Filters */
+
+        .report-filters {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .report-filters input,
+        .report-filters select {
+            padding: 9px 12px;
+            border: 1px solid #DDD5C5;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #29483C;
+        }
+
+        .report-filters input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .report-filters select {
+            min-width: 160px;
+        }
+
+        .filter-count {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        /* Table */
+
+        .table-wrap {
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            font-size: 13px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 11px 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #E5E5E5;
         }
 
         th {
-            background: #315b45;
+            background: #29483C;
             color: white;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
-        .missing, .below {
-            color: #b42318;
+        tbody tr:hover {
+            background: #F7F8F4;
+        }
+
+        td {
+            color: #444;
+        }
+
+        /* Employee and Job Role */
+
+        .employee-name {
             font-weight: bold;
+            color: #29483C;
+        }
+
+        .job-role {
+            display: block;
+            color: #888;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        /* Status Labels */
+
+        .status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .missing {
+            background: #FDECEA;
+            color: #B42318;
+        }
+
+        .below {
+            background: #FFF4CC;
+            color: #8A6500;
         }
 
         .meets {
+            background: #E6F4E6;
             color: #267347;
-            font-weight: bold;
         }
+
+        /* Empty Results */
 
         .empty {
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             color: #666;
+            font-size: 14px;
         }
 
+        /* Responsive */
+
         @media (max-width: 700px) {
+
+            .container {
+                padding: 15px;
+            }
+
             .summary {
                 grid-template-columns: 1fr;
             }
 
             .header {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 10px;
+                padding: 20px;
             }
+
+            .report-section {
+                padding: 15px;
+            }
+
+            .report-filters input,
+            .report-filters select {
+                width: 100%;
+            }
+
         }
+
     </style>
 </head>
 
 <body>
+
 <div class="container">
 
+    <!-- Header -->
+
     <div class="header">
+
         <div>
-            <h1>Organization-Wide Reports</h1>
-            <p>Organizational Skills Gap Report</p>
+            <h1>Skills Gap Report</h1>
+            <p>Employee skills and job-role requirements</p>
         </div>
 
-        <a class="back-link" href="{% url 'admin_dashboard' %}">
+        <a class="back-button" href="{% url 'admin_dashboard' %}">
             Back to Dashboard
         </a>
+
     </div>
 
+
+    <!-- Summary Cards -->
+
     <div class="summary">
+
         <div class="summary-card">
             <h3>Employees Evaluated</h3>
             <p>{{ employees_evaluated }}</p>
@@ -139,56 +308,216 @@
             <h3>Total Skill Gaps</h3>
             <p>{{ total_gaps }}</p>
         </div>
+
     </div>
 
+
+    <!-- Skills Gap Details -->
+
     <div class="report-section">
-        <h2>Skills Gap Details</h2>
-        <p>Comparison of employee proficiency against required job-role skills.</p>
+
+        <div class="section-heading">
+            <h2>Skills Gap Details</h2>
+            <p>Employee proficiency compared to required job-role skills.</p>
+        </div>
+
 
         {% if report_rows %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Employee</th>
-                    <th>Department</th>
-                    <th>Job Role</th>
-                    <th>Required Skill</th>
-                    <th>Current Level</th>
-                    <th>Required Level</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
 
-            <tbody>
-                {% for row in report_rows %}
-                <tr>
-                    <td>{{ row.employee }}</td>
-                    <td>{{ row.department }}</td>
-                    <td>{{ row.job_role }}</td>
-                    <td>{{ row.skill }}</td>
-                    <td>{{ row.current_level }}</td>
-                    <td>{{ row.required_level }}</td>
-                    <td>
-                        {% if row.result == "Missing Skill" %}
-                            <span class="missing">{{ row.result }}</span>
-                        {% elif row.result == "Below Required Level" %}
-                            <span class="below">{{ row.result }}</span>
-                        {% else %}
-                            <span class="meets">{{ row.result }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Filters -->
+
+        <div class="report-filters">
+
+            <input
+                type="search"
+                id="reportSearch"
+                placeholder="Search employee or skill..."
+                aria-label="Search employee or skill"
+            >
+
+            <select id="departmentFilter" aria-label="Filter by department">
+                <option value="">All Departments</option>
+            </select>
+
+            <select id="statusFilter" aria-label="Filter by status">
+                <option value="">All Statuses</option>
+                <option value="below">Below Required</option>
+                <option value="meets">Meets Requirement</option>
+            </select>
+
+        </div>
+
+        <div class="filter-count" id="filterCount"></div>
+
+
+        <!-- Table -->
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Required Skill</th>
+                        <th>Current Level</th>
+                        <th>Required Level</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in report_rows %}
+
+                    <tr class="report-row"
+                        data-department="{{ row.department|escape }}"
+                        data-status="{% if row.result == 'Missing Skill' %}missing{% elif row.result == 'Below Required Level' %}below{% else %}meets{% endif %}">
+
+                        <td>
+                            <span class="employee-name">{{ row.employee }}</span>
+                            <span class="job-role">{{ row.job_role }}</span>
+                        </td>
+
+                        <td>{{ row.department }}</td>
+
+                        <td>{{ row.skill }}</td>
+
+                        <td>{{ row.current_level }}</td>
+
+                        <td>{{ row.required_level }}</td>
+
+                        <td>
+
+                            {% if row.result == "Missing Skill" %}
+
+                                <span class="status missing">
+                                    Missing
+                                </span>
+
+                            {% elif row.result == "Below Required Level" %}
+
+                                <span class="status below">
+                                    Below Required
+                                </span>
+
+                            {% else %}
+
+                                <span class="status meets">
+                                    Meets Requirement
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
 
         {% else %}
+
             <div class="empty">
                 No required job-role skills were found for the employees being evaluated.
             </div>
+
         {% endif %}
+
     </div>
 
 </div>
+
+
+<!-- Filtering Functionality -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const search = document.getElementById("reportSearch");
+    const department = document.getElementById("departmentFilter");
+    const status = document.getElementById("statusFilter");
+    const rows = document.querySelectorAll(".report-row");
+    const count = document.getElementById("filterCount");
+
+    // Populate department options automatically
+
+    const departments = [...new Set(
+        Array.from(rows).map(row => row.dataset.department)
+    )].filter(Boolean).sort();
+
+    departments.forEach(name => {
+
+        const option = document.createElement("option");
+
+        option.value = name.toLowerCase();
+        option.textContent = name;
+
+        department.appendChild(option);
+
+    });
+
+
+    // Filter report rows
+
+    function filterReport() {
+
+        const searchValue = search.value.toLowerCase();
+        const departmentValue = department.value;
+        const statusValue = status.value;
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+
+            const rowText = row.textContent.toLowerCase();
+
+            const matchesSearch =
+                rowText.includes(searchValue);
+
+            const matchesDepartment =
+                !departmentValue ||
+                row.dataset.department.toLowerCase() === departmentValue;
+
+            const matchesStatus =
+                !statusValue ||
+                row.dataset.status === statusValue;
+
+            const showRow =
+                matchesSearch && matchesDepartment && matchesStatus;
+
+            row.style.display = showRow ? "" : "none";
+
+            if (showRow) {
+                visibleCount++;
+            }
+
+        });
+
+        count.textContent =
+            "Showing " + visibleCount + " of " + rows.length + " results";
+
+    }
+
+
+    // Listen for filter changes
+
+    search.addEventListener("input", filterReport);
+    department.addEventListener("change", filterReport);
+    status.addEventListener("change", filterReport);
+
+    filterReport();
+
+});
+
+</script>
+
 </body>
 </html>

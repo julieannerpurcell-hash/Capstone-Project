@@ -1,105 +1,272 @@
+
 {% extends "core/cert_base.html" %}
-{% block title %}Certifications{% endblock %}
+
+{% block title %}Certification Expiration Report{% endblock %}
 
 {% block content %}
+
+<!-- Header -->
+
 <div class="header">
+
     <div>
-        <h1>Certifications</h1>
-        <p>Every employee certification, with its status worked out from the expiration date.</p>
+        <h1>Certification Expiration Report</h1>
+        <p>Monitor employee certifications, expiration dates, and certification status.</p>
     </div>
+
     <div>
-        <a class="back-link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        <a class="back-link" href="{% url 'admin_dashboard' %}">
+            &#8592; Back to Dashboard
+        </a>
+
         &nbsp;&nbsp;
-        <a class="btn" href="{% url 'admin_certification_add' %}">+ Add certification</a>
+
+        <a class="btn" href="{% url 'admin_certification_add' %}">
+            + Add Certification
+        </a>
     </div>
+
 </div>
+
+
+<!-- Expiration Warning -->
 
 {% if expiring_count %}
 <div class="banner">
-    &#9888; {{ expiring_count }} certification{{ expiring_count|pluralize }} expire{{ expiring_count|pluralize:"s," }} within the next {{ soon_days }} days
+    &#9888; {{ expiring_count }} certification{{ expiring_count|pluralize }}
+    expire{{ expiring_count|pluralize:"s," }} within the next {{ soon_days }} days
 </div>
 {% endif %}
 
+
+<!-- Summary Cards -->
+
 <div class="summary">
-    <div class="summary-card"><h3>Total</h3><p>{{ total_count }}</p></div>
-    <div class="summary-card"><h3>Active</h3><p>{{ active_count }}</p></div>
-    <div class="summary-card"><h3>Expiring soon</h3><p>{{ expiring_count }}</p></div>
-    <div class="summary-card"><h3>Expired</h3><p>{{ expired_count }}</p></div>
+
+    <div class="summary-card">
+        <h3>Total</h3>
+        <p>{{ total_count }}</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Active</h3>
+        <p>{{ active_count }}</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Expiring Soon</h3>
+        <p>{{ expiring_count }}</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Expired</h3>
+        <p>{{ expired_count }}</p>
+    </div>
+
 </div>
+
+
+<!-- Certification Details -->
 
 <div class="panel">
+
+    <!-- Filters -->
+
     <form method="get" class="filters">
-        <input type="search" name="q" value="{{ q }}" placeholder="Search employee or certification" aria-label="Search">
+
+        <input
+            type="search"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search employee or certification"
+            aria-label="Search"
+        >
 
         <select name="department" aria-label="Department">
+
             <option value="">All departments</option>
+
             {% for d in departments %}
-            <option value="{{ d.id }}" {% if department == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
+            <option value="{{ d.id }}"
+                {% if department == d.id|stringformat:"s" %}selected{% endif %}>
+                {{ d.name }}
+            </option>
             {% endfor %}
+
         </select>
+
 
         <select name="status" aria-label="Status">
+
             <option value="">All statuses</option>
-            <option value="Active" {% if status == "Active" %}selected{% endif %}>Active</option>
-            <option value="Expiring soon" {% if status == "Expiring soon" %}selected{% endif %}>Expiring soon</option>
-            <option value="Expired" {% if status == "Expired" %}selected{% endif %}>Expired</option>
+
+            <option value="Active"
+                {% if status == "Active" %}selected{% endif %}>
+                Active
+            </option>
+
+            <option value="Expiring soon"
+                {% if status == "Expiring soon" %}selected{% endif %}>
+                Expiring soon
+            </option>
+
+            <option value="Expired"
+                {% if status == "Expired" %}selected{% endif %}>
+                Expired
+            </option>
+
         </select>
+
 
         <select name="certification" aria-label="Certification">
+
             <option value="">All certifications</option>
+
             {% for c in certifications %}
-            <option value="{{ c.id }}" {% if certification == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+            <option value="{{ c.id }}"
+                {% if certification == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.name }}
+            </option>
             {% endfor %}
+
         </select>
 
+
         <button class="btn" type="submit">Filter</button>
-        <a class="btn secondary" href="{% url 'admin_certifications' %}">Clear</a>
+
+        <a class="btn secondary" href="{% url 'admin_certifications' %}">
+            Clear
+        </a>
+
     </form>
 
+
+    <!-- Certification Table -->
+
     {% if page.object_list %}
+
     <div class="table-wrap">
+
         <table>
+
             <thead>
                 <tr>
-                    <th>Employee</th><th>Department</th><th>Certification</th><th>Issuer</th>
-                    <th>Earned</th><th>Expires</th><th>Status</th><th>Actions</th>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Certification</th>
+                    <th>Issuer</th>
+                    <th>Earned</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
+
+
             <tbody>
+
                 {% for item in page %}
+
                 <tr>
+
                     <td>{{ item.employee.name }}</td>
-                    <td>{{ item.employee.department.name|default:"Not assigned" }}</td>
-                    <td>{{ item.certification.name }}</td>
-                    <td>{{ item.certification.issuer|default:"-" }}</td>
-                    <td>{{ item.date_earned|date:"m/d/Y" }}</td>
-                    <td>{{ item.expiration_date|date:"m/d/Y"|default:"No expiration" }}</td>
+
                     <td>
-                        {% if item.status == "Active" %}<span class="pill active">Active</span>
-                        {% elif item.status == "Expiring soon" %}<span class="pill soon">Expiring soon</span>
-                        {% else %}<span class="pill expired">Expired</span>{% endif %}
+                        {{ item.employee.department.name|default:"Not assigned" }}
                     </td>
+
+                    <td>{{ item.certification.name }}</td>
+
+                    <td>{{ item.certification.issuer|default:"-" }}</td>
+
+                    <td>{{ item.date_earned|date:"m/d/Y" }}</td>
+
+                    <td>
+                        {{ item.expiration_date|date:"m/d/Y"|default:"No expiration" }}
+                    </td>
+
+                    <td>
+
+                        {% if item.status == "Active" %}
+
+                            <span class="pill active">Active</span>
+
+                        {% elif item.status == "Expiring soon" %}
+
+                            <span class="pill soon">Expiring soon</span>
+
+                        {% else %}
+
+                            <span class="pill expired">Expired</span>
+
+                        {% endif %}
+
+                    </td>
+
                     <td class="actions">
-                        <a href="{% url 'admin_certification_edit' item.pk %}">Edit</a>
+
+                        <a href="{% url 'admin_certification_edit' item.pk %}">
+                            Edit
+                        </a>
+
                         &nbsp;|&nbsp;
-                        <a class="delete" href="{% url 'admin_certification_delete' item.pk %}">Delete</a>
+
+                        <a class="delete"
+                           href="{% url 'admin_certification_delete' item.pk %}">
+                            Delete
+                        </a>
+
                     </td>
+
                 </tr>
+
                 {% endfor %}
+
             </tbody>
+
         </table>
+
     </div>
 
+
+    <!-- Pagination -->
+
     <div class="pager">
-        <span>Showing {{ page.start_index }}-{{ page.end_index }} of {{ page.paginator.count }}</span>
+
         <span>
-            {% if page.has_previous %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">&laquo; Prev</a>{% endif %}
-            Page {{ page.number }} of {{ page.paginator.num_pages }}
-            {% if page.has_next %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">Next &raquo;</a>{% endif %}
+            Showing {{ page.start_index }}-{{ page.end_index }}
+            of {{ page.paginator.count }}
         </span>
+
+        <span>
+
+            {% if page.has_previous %}
+                <a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.previous_page_number }}">
+                    &laquo; Prev
+                </a>
+            {% endif %}
+
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+
+            {% if page.has_next %}
+                <a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page.next_page_number }}">
+                    Next &raquo;
+                </a>
+            {% endif %}
+
+        </span>
+
     </div>
+
+
     {% else %}
-    <div class="empty">No certifications match your filters.</div>
+
+        <div class="empty">
+            No certifications match your filters.
+        </div>
+
     {% endif %}
+
 </div>
+
 {% endblock %}
