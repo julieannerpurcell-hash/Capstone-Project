@@ -1,4 +1,6 @@
 
+from datetime import date, timedelta
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -8,6 +10,7 @@ from django.utils.dateparse import parse_date
 
 from .models import (
     Employee,
+    EmployeeCertification,
     JobRoleSkill,
     JobRoleCertification,
     Training,
@@ -335,7 +338,6 @@ def employee_training(request):
     })
 
 
-
 @login_required
 def employee_development(request):
 
@@ -400,7 +402,63 @@ def manager_dashboard(request):
     if request.user.employee_profile.role != 'manager':
         return redirect_by_role(request.user)
 
-    return HttpResponse("Manager Dashboard - Coming Soon")
+    employee = request.user.employee_profile
+    department = employee.department
+
+    if not department:
+        return HttpResponse(
+            "Your manager account is not assigned to a department."
+        )
+
+    total_employees = Employee.objects.filter(
+        department=department,
+        role="employee",
+        status="active"
+    ).count()
+
+    employees_requiring_training = Employee.objects.filter(
+        department=department,
+        role="employee",
+        status="active",
+        training_records__status__in=["not_started", "in_progress"]
+    ).distinct().count()
+
+    today = date.today()
+    expiration_limit = today + timedelta(days=90)
+
+    expiring_certifications = EmployeeCertification.objects.filter(
+        employee__department=department,
+        employee__role="employee",
+        employee__status="active",
+        expiration_date__isnull=False,
+        expiration_date__lte=expiration_limit
+    ).count()
+    training_records = Employee.objects.filter(
+        department=department,
+        role="employee",
+        status="active"
+    ).values_list(
+        'training_records__status',
+        flat=True
+    )
+
+    total_training = len(training_records)
+    completed_training = sum(
+        status == 'completed'
+        for status in training_records
+    )
+
+    training_completion = round(
+        (completed_training / total_training) * 100
+    ) if total_training else 0
+
+    return render(request, 'manager_dash.html', {
+    'department': department,
+    'total_employees': total_employees,
+    'employees_requiring_training': employees_requiring_training,
+    'expiring_certifications': expiring_certifications,
+    'training_completion': training_completion,
+})
 
 
 @login_required
@@ -423,6 +481,8 @@ def admin_dashboard(request):
         'core/admin_dashboard.html',
         context
     )
+
+
 @login_required
 def admin_reports(request):
     if request.user.employee_profile.role != "admin":
