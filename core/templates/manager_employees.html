@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Department Employees | NGS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EC;
+            color: #29483C;
+        }
+
+        header {
+            background: #29483C;
+            color: #F7F4EC;
+            padding: 25px 35px;
+        }
+
+        main {
+            padding: 30px 35px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h2 {
+            margin: 0;
+        }
+
+        .page-heading p {
+            margin: 8px 0 0;
+            color: #777;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: #29483C;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #527B63;
+        }
+
+        .employee-table-container {
+            background: white;
+            border: 1px solid #DDD5C5;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #EEE8DC;
+        }
+
+        th {
+            background: #29483C;
+            color: #F7F4EC;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        .employee-search {
+        margin-bottom: 20px;
+        }
+
+        .employee-search input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: 1px solid #DDD5C5;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .employee-search input:focus {
+            border-color: #527B63;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Department Employees</h1>
+    </header>
+
+    <main>
+
+        <div class="page-heading">
+            <div>
+                <h2>Employees</h2>
+            </div>
+
+            <a href="{% url 'manager_dashboard' %}" class="back-button">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    <div class="employee-search">
+        <input
+            type="text"
+            id="employeeSearch"
+            placeholder="Search employees..."
+        >
+    </div>
+        <div class="employee-table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Job Title</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.name }}</td>
+
+                        <td>
+                            {% if employee.job_role %}
+                                {{ employee.job_role.title }}
+                            {% else %}
+                                Not assigned
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if employee.department %}
+                                {{ employee.department.name }}
+                            {% else %}
+                                Not assigned
+                            {% endif %}
+                        </td>
+
+                        <td>{{ employee.get_status_display }}</td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-message">
+                            No active employees found in your department.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </main>
+<script>
+    const employeeSearch = document.getElementById("employeeSearch");
+    const employeeRows = document.querySelectorAll("tbody tr");
+
+    employeeSearch.addEventListener("input", function () {
+        const searchValue = this.value.toLowerCase();
+
+        employeeRows.forEach(function (row) {
+            const rowText = row.textContent.toLowerCase();
+
+            row.style.display = rowText.includes(searchValue)
+                ? ""
+                : "none";
+        });
+    });
+</script>
+</body>
+</html>

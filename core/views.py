@@ -11,9 +11,11 @@ from django.utils.dateparse import parse_date
 from .models import (
     Employee,
     EmployeeCertification,
+    EmployeeSkill,
     JobRoleSkill,
     JobRoleCertification,
     Training,
+    TrainingRecord,
 )
 
 
@@ -460,6 +462,161 @@ def manager_dashboard(request):
     'training_completion': training_completion,
 })
 
+@login_required
+def manager_employees(request):
+
+    if request.user.employee_profile.role != 'manager':
+        return redirect_by_role(request.user)
+
+    manager = request.user.employee_profile
+    department = manager.department
+
+    if not department:
+        return HttpResponse(
+            "Your manager account is not assigned to a department."
+        )
+
+    employees = Employee.objects.filter(
+        department=department,
+        role="employee",
+        status="active"
+    ).select_related(
+        "job_role"
+    ).order_by("name")
+
+    return render(request, "manager_employees.html", {
+        "department": department,
+        "employees": employees,
+    })
+
+@login_required
+def manager_skills_analysis(request):
+
+    if request.user.employee_profile.role != 'manager':
+        return redirect_by_role(request.user)
+
+    manager = request.user.employee_profile
+    department = manager.department
+
+    if not department:
+        return HttpResponse(
+            "Your manager account is not assigned to a department."
+        )
+
+    employees = Employee.objects.filter(
+        department=department,
+        role="employee",
+        status="active",
+        job_role__isnull=False
+    ).select_related(
+        "job_role"
+    ).prefetch_related(
+        "employee_skills__skill",
+        "job_role__required_skills__skill"
+    ).order_by("name")
+
+    analysis_rows = []
+    total_gaps = 0
+    employees_with_gaps = set()
+
+    for employee in employees:
+
+        current_skills = {
+            item.skill_id: item
+            for item in employee.employee_skills.all()
+        }
+
+        for requirement in employee.job_role.required_skills.filter(
+            is_required=True
+        ).select_related("skill"):
+
+            current_skill = current_skills.get(
+                requirement.skill_id
+            )
+
+            if current_skill is None:
+                current_level = "Not recorded"
+                result = "Missing Skill"
+                total_gaps += 1
+                employees_with_gaps.add(employee.id)
+
+            else:
+                current_level = current_skill.get_proficiency_display()
+
+                if current_skill.proficiency < requirement.required_level:
+                    result = "Below Required Level"
+                    total_gaps += 1
+                    employees_with_gaps.add(employee.id)
+                else:
+                    result = "Meets Requirement"
+
+            analysis_rows.append({
+                "employee": employee.name,
+                "job_role": employee.job_role.title,
+                "skill": requirement.skill.name,
+                "current_level": current_level,
+                "required_level": requirement.get_required_level_display(),
+                "result": result,
+            })
+
+    context = {
+        "department": department,
+        "analysis_rows": analysis_rows,
+        "total_employees": employees.count(),
+        "total_gaps": total_gaps,
+        "employees_with_gaps": len(employees_with_gaps),
+    }
+
+    return render(
+        request,
+        "manager_skills_analysis.html",
+        context
+    )
+
+@login_required
+def manager_training(request):
+
+    if request.user.employee_profile.role != 'manager':
+        return redirect_by_role(request.user)
+
+    manager = request.user.employee_profile
+    department = manager.department
+
+    if not department:
+        return HttpResponse(
+            "Your manager account is not assigned to a department."
+        )
+
+    training_records = TrainingRecord.objects.filter(
+        employee__department=department,
+        employee__role="employee",
+        employee__status="active"
+    ).select_related(
+        "employee",
+        "training",
+        "training__related_skill"
+    ).order_by("employee__name", "training__course_name")
+
+    context = {
+        "department": department,
+        "training_records": training_records,
+        "total_assignments": training_records.count(),
+        "completed_training": training_records.filter(
+            status="completed"
+        ).count(),
+        "in_progress_training": training_records.filter(
+            status="in_progress"
+        ).count(),
+        "not_started_training": training_records.filter(
+            status="not_started"
+        ).count(),
+    }
+
+    return render(
+        request,
+        "manager_training.html",
+        context
+    )
 
 @login_required
 def admin_dashboard(request):
