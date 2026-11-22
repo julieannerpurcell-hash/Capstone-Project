@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from core import views, cert_views, report_views, training_report_views
+from core import views, cert_views, report_views, training_report_views, ai_views
 
 urlpatterns = [
     path('', views.login_view, name='login'),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('employee/skills-gap/', views.employee_skills_gap, name='employee_skills_gap'),
     path('employee/certifications/', views.employee_certifications, name='employee_certifications'),
     path('employee/training/',views.employee_training, name='employee_training'),
+        path('employee/ai/assist/', ai_views.employee_ai_assist, name='employee_ai_assist'),
     path('employee/development/', views.employee_development, name='employee_development'),
     path('manager/', views.manager_dashboard, name='manager_dashboard'),
     path('manager/employees/', views.manager_employees, name='manager_employees'),

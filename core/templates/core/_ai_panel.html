@@ -1,0 +1,138 @@
+{# NGS AI Assistant panel. Shared by every employee page: {% include "core/_ai_panel.html" %} #}
+<style>
+    .ngs-ai-button {
+        position: fixed; bottom: 25px; right: 25px; z-index: 10;
+        background: #29483C; color: white; border: none; border-radius: 30px;
+        padding: 15px 22px; font-size: 15px; font-weight: bold; cursor: pointer;
+        box-shadow: 0 4px 12px #00000030;
+    }
+    .ngs-ai-button:hover { background: #527B63; }
+    .ngs-ai-panel {
+        display: none; position: fixed; bottom: 90px; right: 25px; z-index: 10;
+        width: 360px; max-width: calc(100vw - 40px); max-height: 75vh; overflow-y: auto;
+        background: white; border: 1px solid #DDD5C5; border-radius: 12px; padding: 20px;
+        box-shadow: 0 4px 15px #00000025; color: #29483C; font-family: Arial, sans-serif;
+    }
+    .ngs-ai-panel h3 { margin: 0 0 8px; }
+    .ngs-ai-panel p { color: #555; line-height: 1.5; font-size: 14px; margin: 0 0 10px; }
+    .ngs-ai-panel button {
+        background: #29483C; color: white; border: none; padding: 9px 15px;
+        border-radius: 6px; cursor: pointer; font-size: 14px;
+    }
+    .ngs-ai-panel button:disabled { opacity: 0.6; cursor: wait; }
+    .ngs-ai-panel button.ngs-ai-secondary { background: white; color: #29483C; border: 1px solid #29483C; }
+    .ngs-ai-panel textarea {
+        width: 100%; box-sizing: border-box; border: 1px solid #DDD5C5; border-radius: 6px;
+        padding: 8px; font-family: inherit; font-size: 14px; margin: 6px 0; resize: vertical;
+    }
+    .ngs-ai-panel details { background: #F7F4EC; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 13px; }
+    .ngs-ai-panel summary { cursor: pointer; font-weight: bold; }
+    .ngs-ai-panel details ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.5; color: #444; }
+    .ngs-ai-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .ngs-ai-result { margin-top: 12px; border-top: 1px solid #DDD5C5; padding-top: 10px; display: none; }
+    .ngs-ai-result .ngs-ai-label { font-size: 12px; font-weight: bold; color: #527B63; margin-bottom: 6px; }
+    .ngs-ai-result .ngs-ai-text { white-space: pre-wrap; font-size: 14px; line-height: 1.5; color: #222; }
+    .ngs-ai-result .ngs-ai-notice { font-size: 12px; color: #7a5a00; margin-top: 8px; }
+    .ngs-ai-result .ngs-ai-error { color: #b42318; font-size: 14px; }
+</style>
+
+<button class="ngs-ai-button" type="button" onclick="toggleNgsAI()">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    Ask AI
+</button>
+
+<div class="ngs-ai-panel" id="ngsAiPanel">
+    {% csrf_token %}
+    <h3>NGS AI Assistant</h3>
+    <p>
+        Get suggestions based on your own skill gaps, certifications, goals and training.
+        Suggestions are for you and your manager to review. They are not decisions.
+    </p>
+
+    <details>
+        <summary>About this AI feature</summary>
+        <ul>
+            <li><b>Purpose:</b> helps you pick training that closes the gaps between your skills and your job role's requirements.</li>
+            <li><b>Data sent:</b> your job role title, skill levels, certification status, goals, assigned training and the NGS training catalog. Your name, email, ID number and contact details are never sent.</li>
+            <li><b>What it produces:</b> a short list of suggested next steps with a reason for each.</li>
+            <li><b>How it is used:</b> as a starting point for a conversation with your manager. Nothing is changed or assigned automatically.</li>
+            <li><b>Limitations:</b> it can be wrong or out of date, it only knows what is in the portal, and it only recommends courses in the NGS catalog. Always check with your manager.</li>
+        </ul>
+    </details>
+
+    <div class="ngs-ai-actions">
+        <button type="button" id="ngsAiPlan" onclick="askNgsAI(false)">Suggest my development plan</button>
+    </div>
+
+    <p style="margin-top:14px;">Or ask a question about your training or development:</p>
+    <textarea id="ngsAiQuestion" rows="2" maxlength="300"
+        placeholder="For example: Which course should I take first for my missing skill?"></textarea>
+    <div class="ngs-ai-actions">
+        <button type="button" id="ngsAiAsk" onclick="askNgsAI(true)">Ask</button>
+        <button type="button" class="ngs-ai-secondary" onclick="toggleNgsAI()">Close</button>
+    </div>
+
+    <div class="ngs-ai-result" id="ngsAiResult" aria-live="polite">
+        <div class="ngs-ai-label" id="ngsAiLabel"></div>
+        <div class="ngs-ai-text" id="ngsAiText"></div>
+        <div class="ngs-ai-notice" id="ngsAiNotice"></div>
+    </div>
+</div>
+
+<script>
+    function toggleNgsAI() {
+        const panel = document.getElementById("ngsAiPanel");
+        panel.style.display = panel.style.display === "block" ? "none" : "block";
+    }
+
+    async function askNgsAI(useQuestion) {
+        const result = document.getElementById("ngsAiResult");
+        const label = document.getElementById("ngsAiLabel");
+        const text = document.getElementById("ngsAiText");
+        const notice = document.getElementById("ngsAiNotice");
+        const buttons = [document.getElementById("ngsAiPlan"), document.getElementById("ngsAiAsk")];
+        const question = useQuestion ? document.getElementById("ngsAiQuestion").value.trim() : "";
+
+        if (useQuestion && !question) {
+            result.style.display = "block";
+            label.textContent = "";
+            notice.textContent = "";
+            text.innerHTML = "";
+            const err = document.createElement("div");
+            err.className = "ngs-ai-error";
+            err.textContent = "Type a question first, or use the development plan button.";
+            text.appendChild(err);
+            return;
+        }
+
+        const form = new FormData();
+        form.append("question", question);
+        form.append("csrfmiddlewaretoken",
+            document.querySelector("#ngsAiPanel [name=csrfmiddlewaretoken]").value);
+
+        buttons.forEach(b => b.disabled = true);
+        result.style.display = "block";
+        label.textContent = "";
+        notice.textContent = "";
+        text.textContent = "Thinking...";
+
+        try {
+            const response = await fetch("{% url 'employee_ai_assist' %}", { method: "POST", body: form });
+            const data = await response.json();
+            if (data.ok) {
+                label.textContent = data.source === "ai"
+                    ? "AI-generated suggestion. Please review with your manager."
+                    : "Rule-based suggestion. Please review with your manager.";
+                text.textContent = data.text;
+                notice.textContent = data.notice || "";
+            } else {
+                label.textContent = "";
+                text.textContent = data.error || "Something went wrong. Please try again.";
+            }
+        } catch (e) {
+            label.textContent = "";
+            text.textContent = "Could not reach the server. Please try again.";
+        }
+        buttons.forEach(b => b.disabled = false);
+    }
+</script>
