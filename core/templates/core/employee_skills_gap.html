@@ -550,32 +550,7 @@
 
 </main>
 
-<!-- Ask AI Button -->
-
-<button class="ask-ai-button" onclick="toggleAI()">
-    <i class="fa-solid fa-wand-magic-sparkles"></i>
-    Ask AI
-</button>
-
-<!-- AI Assistant Panel -->
-
-<div class="ai-panel" id="aiPanel">
-
-    <h3>NGS AI Assistant</h3>
-
-    <p>
-        Get help understanding your skill gaps, certification
-        requirements, and professional development opportunities.
-    </p>
-
-    <p>
-        Recommendations should be reviewed before making
-        professional development decisions.
-    </p>
-
-    <button onclick="toggleAI()">Close</button>
-
-</div>
+{% include "core/_ai_panel.html" %}
 
 <!-- Search, Filter, and AI Functions -->
 

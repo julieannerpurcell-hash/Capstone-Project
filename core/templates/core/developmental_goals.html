@@ -363,25 +363,7 @@
     </main>
 
 
-    <!-- Ask AI Button -->
-
-    <button class="ask-ai-button" onclick="toggleAI()">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        Ask AI
-    </button>
-
-    <div class="ai-panel" id="aiPanel">
-
-        <h3>NGS AI Assistant</h3>
-
-        <p>
-            Ask questions about your professional development goals
-            and opportunities to improve your skills.
-        </p>
-
-        <button onclick="toggleAI()">Close</button>
-
-    </div>
+     {% include "core/_ai_panel.html" %}
 
 
     <!-- JavaScript -->
